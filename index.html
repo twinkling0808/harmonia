@@ -8,6 +8,9 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#00462a">
+<meta property="og:title" content="아르모니아 Harmonia Music Box">
+<meta property="og:description" content="합창단 악보 · 연습 · 필기">
+<meta name="format-detection" content="telephone=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="아르모니아">
@@ -83,6 +86,47 @@ details summary{cursor:pointer}
 body.night #viewer{background:#0b0b0b}
 body.night .pg{background:#000}
 body.night .pg img{filter:invert(1) hue-rotate(180deg)}
+/* ===== v13 스캔 카메라 · 안내띠 ===== */
+a.btn{text-decoration:none;display:block}
+#cam{position:fixed;inset:0;z-index:20;background:#000;color:#fff;display:flex;flex-direction:column}
+#cam[hidden]{display:none}
+#camBox{position:relative;flex:1;min-height:0;background:#000}
+#camV{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+#camO{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#camTop{position:absolute;left:0;right:0;top:0;display:flex;gap:8px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;background:linear-gradient(#000a,#0000)}
+#camTop button{background:#0008;color:#fff;border:1px solid #fff4;border-radius:99px;padding:8px 14px;font-size:14px}
+#camTop button.on{background:#fffdf1;color:#00462a;font-weight:700}
+#camT{margin-left:auto;font-weight:700;font-size:15px;text-shadow:0 1px 3px #000}
+#camMsg{position:absolute;left:12px;right:12px;bottom:10px;text-align:center;font-size:13.5px;line-height:1.5;text-shadow:0 1px 4px #000;pointer-events:none}
+#camFlash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+#camBot{background:#0b0f0c;padding:8px 12px calc(12px + env(safe-area-inset-bottom))}
+#camStrip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;min-height:76px}
+#camStrip .ct{flex:none;width:54px;height:72px;border-radius:7px;overflow:hidden;background:#222;position:relative;border:1px solid #fff3}
+#camStrip img{width:100%;height:100%;object-fit:cover;display:block}
+#camStrip .ct i{position:absolute;left:3px;bottom:2px;font-style:normal;font-size:11px;font-weight:700;text-shadow:0 0 3px #000}
+#camStrip .ct.w::after{content:"";position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px;border:3px solid #fff5;border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.camrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+#camShot{width:74px;height:74px;border-radius:50%!important;border:5px solid #fff!important;background:#fffdf1!important;padding:0!important;box-shadow:0 0 0 3px #0008 inset}
+#camShot:active{transform:scale(.93)}
+#camDone{justify-self:end;background:#fffdf1;color:#00462a;font-weight:700;border-radius:99px;padding:12px 20px}
+#camFb{justify-self:center}
+#kkBar{position:fixed;left:0;right:0;top:0;z-index:25;background:#00462a;color:#fffdf1;font-size:13px;display:flex;gap:8px;align-items:center;padding:calc(7px + env(safe-area-inset-top)) 10px 7px;box-shadow:0 2px 8px #0004}
+#kkBar[hidden]{display:none}
+#kkBar span{flex:1;line-height:1.35}
+#kkBar button{background:#fffdf1;color:#00462a;border:0;border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:700}
+#kkBar #kkX{background:transparent;color:#fffdf1;padding:6px 8px;font-size:15px}
+#infoBar{margin:0 0 12px;padding:11px 13px;border-radius:14px;background:#e3eee7;color:#00462a;font-size:13.5px;line-height:1.55;display:grid;gap:8px}
+#infoBar[hidden]{display:none}
+#infoBar .r{display:flex;gap:8px;flex-wrap:wrap}
+#infoBar button{font-size:13.5px;padding:7px 14px}
+#infoBar .tip{font-size:12.5px;color:#33423a;border-top:1px solid #0001;padding-top:7px}
+#pdfBtn{width:100%;background:var(--acc)!important;color:#fffdf1!important;border-color:var(--acc)!important;font-weight:700;padding:13px!important}
+/* ===== v14 게시판형 목록 ===== */
+.song{background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important;margin:0!important;padding:14px 4px!important}
+.song:active{background:var(--accs)!important}
+.song.on{background:var(--accs)!important}
+#list .song:last-child,#slList .song:last-child{border-bottom-color:transparent!important}
 /* ===== v8 오프라인·태블릿 ===== */
 .mk{display:flex;align-items:center;gap:8px;color:var(--acc)}
 .dli{font-style:normal;font-size:11.5px;background:var(--accs);color:var(--acc);padding:2px 8px;border-radius:99px;font-weight:600}
@@ -197,17 +241,19 @@ body.admin .admb{display:block!important}
 <body>
 <div class="wrap">
 
+<div id="kkBar" hidden><span>카톡 안에서는 악보 저장·앱 설치가 안 돼요</span><button id="kkOpen">기본 브라우저로 열기</button><button id="kkX" aria-label="닫기">✕</button></div>
+<div id="infoBar" hidden></div>
 <!-- 입장 -->
 <div id="gate" hidden>
   <div class="bar"><h1 class="brand"><img class="logo" src="icon-192.png" alt="" width="40" height="40" style="border-radius:10px"><span>아르모니아<small>Harmonia Music Box</small></span></h1></div>
   <p class="small">합창단 비밀번호를 입력하세요</p>
-  <div class="row"><input id="gpw" type="password" placeholder="비밀번호"><button id="gok" class="btn pri">입장</button></div>
+  <div class="row"><input id="gpw" type="password" placeholder="비밀번호" autocomplete="off" data-lpignore="true"><button id="gok" class="btn pri">입장</button></div>
 </div>
 
 <!-- 홈 -->
 <div id="home" hidden>
   <div class="bar"><h1 class="brand"><img class="logo" src="icon-192.png" alt="" width="40" height="40" style="border-radius:10px"><span>아르모니아<small>Harmonia Music Box</small></span></h1><button id="admBtn" class="ib" aria-label="관리자"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button id="dlBtn" class="ib" aria-label="저장된 악보"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7.5v6M9.3 11.2l2.7 2.7 2.7-2.7M10 18h4"/></svg></button><button id="reload" class="ib" aria-label="새로고침"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></div>
-  <div class="tabs"><button data-h="songs" class="on">곡</button><button data-h="sets">연습곡 묶음</button></div>
+  <div class="tabs" id="homeTabs" hidden><button data-h="songs" class="on">곡</button><button data-h="sets">연습곡 묶음</button></div>
   <div id="h-songs">
     <input id="q" placeholder="곡 제목 검색">
     <div id="chips" class="chips"></div>
@@ -225,6 +271,7 @@ body.admin .admb{display:block!important}
       <label><select id="stSel"></select></label>
     </div>
     <div id="list"></div>
+    <div id="newSl2w" hidden><button class="lnk adm" id="newSl2">＋ 연습곡 묶음 만들기</button></div>
   </div>
   <div id="h-sets" hidden>
     <button class="btn pri adm" id="newSl">＋ 묶음 만들기</button>
@@ -236,7 +283,7 @@ body.admin .admb{display:block!important}
 <!-- 연습곡 묶음 -->
 <div id="sl" hidden>
   <div class="bar"><button id="slBack">←</button><h2 id="slTitleH"></h2><button id="slShare">공유</button></div>
-  <div class="tools"><button id="slPdf">전체 PDF (A4 인쇄)</button><button id="slOff">묶음 이 기기에 저장</button><button id="slEdit" class="adm">✏️ 수정</button><button id="slDel" class="adm">🗑 삭제</button></div>
+  <div class="tools"><button id="slPdf">🖨 전체 PDF (A4 인쇄)</button><button id="slOff">묶음 이 기기에 저장</button><button id="slEdit" class="adm">✏️ 수정</button><button id="slDel" class="adm">🗑 삭제</button></div>
   <div id="slSongs"></div>
 </div>
 
@@ -253,15 +300,14 @@ body.admin .admb{display:block!important}
   <div class="spanel">
     <div class="grab"></div>
     <div class="bar"><h2 id="stitle"></h2><button id="sheetX">닫기</button></div>
-    <div class="grid2">
+    <button id="pdfBtn">🖨 인쇄용 PDF (A4) 만들기</button>
+    <div class="grid2" style="margin-top:8px">
       <button id="back">← 목록으로</button>
       <button id="prevSong" hidden>이전 곡</button><button id="nextSong" hidden>다음 곡</button>
       <button id="fav">☆ 즐겨찾기</button>
       <button id="share">공유</button>
-      <button id="pdfBtn">PDF 만들기</button>
       <button id="zReset">폭에 맞춤</button>
       <button id="zFit">한 쪽 전체 보기</button>
-      <button id="enhBtn">선명하게 보기</button>
     </div>
     <div id="dlRow" style="margin:12px 2px 0;display:grid;gap:8px"></div>
     <div id="pdfs" style="margin-top:8px"></div>
@@ -330,11 +376,11 @@ body.admin .admb{display:block!important}
     <details id="dAdm" class="admb">
       <summary>관리 · 악보 추가 · 순서 · 삭제</summary>
       <div class="tools" style="margin-top:8px">
-        <label class="btn adm">촬영<input type="file" id="camIn" accept="image/*" capture="environment" hidden></label>
+        <button id="camBtn" class="btn adm">📷 스캔 촬영</button>
         <label class="btn adm">파일 추가<input type="file" id="galIn" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
         <button id="editBtn" class="adm">↕ 순서·삭제</button>
       </div>
-<label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 올릴 때 흑백으로 선명하게 보정해서 저장 (인쇄도 선명해져요)</label>
+<label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 스캔 보정: 악보 부분만 자동으로 잘라 배경을 하얗게, 글씨를 선명하게 (파일도 작아져요)</label>
       <h3>곡 이름 · 장르 바꾸기</h3>
       <div class="row"><input id="eTitle" placeholder="곡명"></div>
       <div class="row"><input id="eGenre" list="gl" placeholder="장르"><button id="eSave" class="btn pri">저장</button></div>
@@ -355,10 +401,10 @@ body.admin .admb{display:block!important}
     <datalist id="gl"></datalist>
     <input id="nTitle" placeholder="곡명">
     <div class="tools">
-      <label class="btn">촬영<input type="file" id="nCam" accept="image/*" capture="environment" hidden></label>
+      <button id="nCamBtn" class="btn">📷 스캔 촬영</button>
       <label class="btn">파일 선택 (사진·PDF·ZIP)<input type="file" id="nGal" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
     </div>
-    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 올릴 때 흑백으로 선명하게 보정해서 저장 (인쇄도 선명해져요)</label>
+    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 스캔 보정: 악보 부분만 자동으로 잘라 배경을 하얗게, 글씨를 선명하게 (파일도 작아져요)</label>
     <div class="small" id="nInfo">선택한 파일 0개 (나중에 추가해도 됩니다)</div>
     <details>
       <summary>연습·공연 이력 넣기 (선택)</summary>
@@ -407,8 +453,31 @@ body.admin .admb{display:block!important}
   <div class="small" id="pHint"></div>
 </div>
 
+<div id="cam" hidden>
+  <div id="camBox">
+    <video id="camV" playsinline muted autoplay></video>
+    <canvas id="camO"></canvas><div id="camFlash"></div>
+    <div id="camTop"><button id="camX">닫기</button><button id="camAuto" class="on">자동 맞춤</button><button id="camEnh" class="on">스캔 보정</button><span id="camT"></span></div>
+    <div id="camMsg"></div>
+  </div>
+  <div id="camBot">
+    <div id="camStrip"></div>
+    <div class="camrow"><span></span><button id="camShot" aria-label="촬영"></button><button id="camDone">완료</button></div>
+    <div class="camrow" id="camFbRow" hidden><span></span><label id="camFb" class="btn pri">카메라 앱으로 촬영<input type="file" id="camFile" accept="image/*" capture="environment" hidden></label><button id="camDone2" class="btn" style="justify-self:end">완료</button></div>
+  </div>
+</div>
 <div id="pdfres" class="ov" hidden><div class="box"><b id="prT"></b><div class="small" id="prI"></div>
-  <a id="prOpen" class="btn pri" target="_blank">열기·인쇄</a><a id="prDl" class="btn" target="_blank">다운로드</a><button id="prX">닫기</button></div></div>
+  <div id="prOpt">
+    <label class="small" style="display:block;margin:2px 0 8px"><input type="checkbox" id="prBw"> 흑백으로 또렷하게 (인쇄·잉크 절약 · 이때만 보정하므로 화면은 느려지지 않아요)</label>
+    <button id="prGo" class="btn pri" style="width:100%;padding:13px">PDF 만들기</button>
+  </div>
+  <div id="prDone" style="display:none;gap:8px">
+    <div class="small" id="prInfo2"></div>
+    <button id="prShare" class="btn pri" style="padding:13px">공유 · 저장 (카톡, 프린터 앱…)</button>
+    <a id="prOpen" class="btn" target="_blank" style="text-align:center">열어서 인쇄</a>
+    <a id="prDl" class="btn" style="text-align:center">이 기기에 다운로드</a>
+  </div>
+  <button id="prX">닫기</button></div></div>
 <!-- 여러 곡 나누기 -->
 <div id="bulkdlg" class="ov" hidden>
   <div class="box">
@@ -416,7 +485,7 @@ body.admin .admb{display:block!important}
     <div class="small">여러 곡이 묶인 PDF·ZIP을 올리면, 다음 화면에서 곡이 시작되는 쪽만 눌러 나눕니다. PDF·ZIP을 여러 개 고르면 파일 하나가 곡 하나로 미리 나뉘고, ZIP 안에 곡별 폴더가 있으면 폴더 이름이 곡명이 됩니다.</div>
     <input id="bkGenre" list="gl" placeholder="장르 (모든 곡에 기본으로 적용, 곡마다 바꿀 수 있어요)">
     <label class="btn">파일 선택 (PDF·ZIP·사진)<input type="file" id="bkFile" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
-    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 올릴 때 흑백으로 선명하게 보정해서 저장 (인쇄도 선명해져요)</label>
+    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 스캔 보정: 악보 부분만 자동으로 잘라 배경을 하얗게, 글씨를 선명하게 (파일도 작아져요)</label>
     <div class="small" id="bkInfo">선택한 파일 0개</div>
     <div class="row"><button id="bkCancel">취소</button><button id="bkGo" class="btn pri" style="flex:1">쪽 불러오기</button></div>
   </div>
@@ -492,6 +561,7 @@ let pw = '', role = null, lib = {genres: []}, byId = {}, setlists = [], S = null
     curSl = null, filter = 'all', zoom = 100, editMode = false, tok = 0, newFiles = [], selOrder = [], editSlId = null;
 let favs = []; try { favs = JSON.parse(ls.get('favs', '[]')); } catch (e) {}
 const cache = {};
+let newScans = [];
 let ALL = [], H = { start: '', perfs: [] }, ordArr = [], autoTitle = '';
 let recent = {}; try { recent = JSON.parse(ls.get('recent', '{}')) || {}; } catch (e) {}
 let grpKey = ls.get('grp', 'none'), sortKey = ls.get('sort', 'recent');
@@ -521,6 +591,8 @@ const kv = (() => {
 class AppErr extends Error {}
 const NEEDNET = '인터넷에 연결되면 사용할 수 있어요';
 const LONG = { makePdf: 300000, makeSetPdf: 300000, uploadFile: 120000, submitRecording: 120000 };
+const WRITES = new Set(['createSong', 'uploadFile', 'saveLinks', 'trashItem', 'trashSong', 'saveOrder', 'saveHistory', 'editSong', 'renameItem', 'saveSetlist', 'deleteSetlist', 'makePdf']);
+const fetchedAt = {}; let FORCE_T = 0;
 const CACHED = { getLibrary: () => 'lib', getSetlists: () => 'sl', getSong: a => 'song:' + a[1] };
 async function net(fn, a, ms) {
   if (!window.APP_API) throw new AppErr('config.js 에 서버 주소(APP_API)가 없어요');
@@ -532,17 +604,28 @@ async function net(fn, a, ms) {
     return j.data;
   } finally { clearTimeout(t); }
 }
-async function run0(fn, a) {
+async function bgFetch(fn, a, k, old) {              // 화면은 저장본으로 먼저 보여주고, 뒤에서 새로 받아 바뀐 것만 반영
+  fetchedAt[k] = Date.now();
+  try {
+    const d = await net(fn, a, 20000); kv.set(k, d);
+    if (JSON.stringify(d) !== JSON.stringify(old)) window.dispatchEvent(new CustomEvent('fresh', { detail: { fn: fn, args: a, key: k } }));
+  } catch (e) {}
+}
+async function run0(fn, a, opt) {
   const online = navigator.onLine !== false;
   if (fn === 'getImageData') {                       // 사진은 '기기에 저장'한 곡만 보관
     const k = 'img:' + a[1], c = await kv.get(k); if (c) return c;
     if (!online) throw new Error('오프라인이라 이 쪽은 아직 받아 둔 적이 없어요');
     return net(fn, a, 60000);
   }
-  if (CACHED[fn]) {                                   // 목록·곡 정보: 온라인이면 새로, 느리거나 오프라인이면 저장본
-    const k = CACHED[fn](a), c = await kv.get(k);
+  if (CACHED[fn]) {                                   // 목록·곡 정보
+    const k = CACHED[fn](a), c = await kv.get(k), fresh = opt && opt.fresh;
+    if (c !== undefined && !fresh && (!online || FORCE_T <= (fetchedAt[k] || 0))) {
+      if (online && Date.now() - (fetchedAt[k] || 0) > 20000) bgFetch(fn, a, k, c);
+      return c;                                       // 저장본을 바로 (인터넷이 느려도 기다리지 않음)
+    }
     if (online) {
-      try { const d = await net(fn, a, c !== undefined ? 3000 : 12000); kv.set(k, d); return d; }
+      try { const d = await net(fn, fresh && fn !== 'getSetlists' ? a.concat([true]) : a, c !== undefined ? 4000 : 25000); kv.set(k, d); fetchedAt[k] = Date.now(); return d; }
       catch (e) { if (e instanceof AppErr) throw e; }
     }
     if (c !== undefined) return c;
@@ -555,13 +638,23 @@ async function run0(fn, a) {
     throw new Error(NEEDNET);
   }
   if (!online) throw new Error(NEEDNET);
-  return net(fn, a, LONG[fn] || 60000);
+  const d = await net(fn, a, LONG[fn] || 60000);
+  if (WRITES.has(fn)) FORCE_T = Date.now();
+  return d;
 }
 async function run(fn, ...a) {
   try { return await run0(fn, a); }
   catch (e) { busy(false); toast('오류: ' + ((e && e.message) || (e && e.name === 'AbortError' ? '응답이 늦어요. 잠시 후 다시' : e))); throw e; }
 }
 const call = (fn, ...a) => run(fn, pw, ...a);
+const callFresh = async (fn, ...a) => { try { return await run0(fn, [pw].concat(a), { fresh: true }); } catch (e) { busy(false); toast('오류: ' + ((e && e.message) || e)); throw e; } };
+window.addEventListener('fresh', async ev => {          // 뒤에서 받아 온 새 내용이 있을 때만 화면 갱신
+  const d = ev.detail; if (!role) return;
+  try {
+    if (d.fn === 'getLibrary' || d.fn === 'getSetlists') await loadLib();
+    else if (d.fn === 'getSong' && S && S.id === d.args[1] && !$('#song').hidden) await mergeSong();
+  } catch (e) {}
+});
 function toast(m) { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2800); }
 function busy(m) { $('#busy').hidden = !m; if (m) $('#busyMsg').textContent = m; }
 function view(v) { ['gate','home','song','sl'].forEach(x => $('#' + x).hidden = x !== v); window.scrollTo(0, 0); }
@@ -588,8 +681,36 @@ async function start() {
     return;
   }
   try { const r = await run('login', pw); if (r.role) return enter(r.role); } catch (e) {}
-  view('gate');
+  if (INIT.song || INIT.setlist) $('#gate .small').textContent = '공유받은 악보를 열려면 합창단 비밀번호를 입력하세요';
+  view('gate'); showInfo();
 }
+/* ---------- 설치·브라우저 안내 ---------- */
+const UA = navigator.userAgent, IS_KAKAO = /KAKAOTALK/i.test(UA);
+const IS_IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const STANDALONE = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+let deferInst = null, tipOpen = false;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferInst = e; showInfo(); });
+window.addEventListener('appinstalled', () => { deferInst = null; ls.set('instHide', String(Date.now() + 3650 * 864e5)); showInfo(); });
+function showInfo() {
+  const b = $('#infoBar'); if (!b) return; let h = '';
+  $('#kkBar').hidden = !IS_KAKAO || !!window.__kkHide;
+  if (IS_KAKAO) h = '';
+  else if (!STANDALONE() && Date.now() > +ls.get('instHide', '0')) {
+    if (deferInst) h = '<div><b>앱으로 설치</b>하면 홈 화면에서 바로 열리고, 악보를 기기에 저장해 둘 수 있어요.</div><div class="r"><button class="btn pri" id="ibInst">설치하기</button><button id="ibHide">나중에</button></div>';
+    else if (IS_IOS) h = '<div><b>앱으로 설치</b>: <b>사파리</b>에서 공유 버튼(⬆) → <b>홈 화면에 추가</b>. (카톡·크롬에서는 안 돼요)</div><div class="r"><button id="ibHide">알겠어요</button></div>';
+    else h = '<div><b>앱으로 설치</b>: 크롬 메뉴(⋮) → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></div><div class="r"><button id="ibTip">설치가 안 돼요</button><button id="ibHide">나중에</button></div>' +
+      (tipOpen ? '<div class="tip">· <b>"이미 설치됨"</b>이라는데 홈 화면에 없다면: 크롬 메뉴 → 설정 → 앱(애플리케이션)에서 <b>아르모니아</b>가 있으면 삭제하고, 크롬을 완전히 닫았다가 다시 열어 주세요.<br>· 그래도 안 되면 크롬 메뉴(⋮) → <b>홈 화면에 추가</b>(바로가기)만 해도 악보는 똑같이 열려요.</div>' : '');
+  }
+  b.hidden = !h; b.innerHTML = h;
+}
+$('#kkOpen').onclick = () => { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href); };
+$('#kkX').onclick = () => { window.__kkHide = true; $('#kkBar').hidden = true; };
+$('#infoBar').onclick = async e => {
+  const id = e.target.id;
+  if (id === 'ibInst' && deferInst) { deferInst.prompt(); try { await deferInst.userChoice; } catch (er) {} deferInst = null; showInfo(); }
+  else if (id === 'ibHide') { ls.set('instHide', String(Date.now() + 7 * 864e5)); showInfo(); }
+  else if (id === 'ibTip') { tipOpen = !tipOpen; showInfo(); }
+};
 function setOff() { $('#offline').hidden = navigator.onLine !== false; }
 window.addEventListener('online', setOff); window.addEventListener('offline', setOff);
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -601,11 +722,19 @@ async function enter(r) {
   role = r; ls.set('role', r); setOff();
   document.body.classList.toggle('admin', role === 'admin');
   $('#admBtn').classList.toggle('on', role === 'admin');
-  view('home');
+  view('home'); showInfo();
+  if (INIT.song && !INIT.done) {                      // 공유받은 곡: 목록을 기다리지 않고 바로 열기
+    INIT.done = true; loadLib().catch(() => {});
+    return openSong(INIT.song, (byId[INIT.song] || {}).genre || '', 'home');
+  }
+  if (!lib.genres.length) $('#list').innerHTML = '<p class="small" style="text-align:center;padding:40px 0">악보함을 불러오는 중…</p>';
   await loadLib();
-  if (INIT.setlist) {
-    if (setlists.some(x => x.id === INIT.setlist)) openSetlist(INIT.setlist); else toast('공유된 묶음을 찾을 수 없어요');
-  } else if (INIT.song && byId[INIT.song]) openSong(INIT.song, byId[INIT.song].genre, 'home');
+  if (INIT.setlist && !INIT.done) {
+    INIT.done = true;
+    let ok = setlists.some(x => x.id === INIT.setlist);
+    if (!ok) { try { setlists = await callFresh('getSetlists'); ok = setlists.some(x => x.id === INIT.setlist); } catch (e) {} }
+    if (ok) openSetlist(INIT.setlist); else toast('공유된 묶음을 찾을 수 없어요');
+  }
 }
 $('#admBtn').onclick = async () => {
   if (role === 'admin') return openSettings();
@@ -655,8 +784,8 @@ $('#mpwOff').onclick = async () => {
 $('#admOut').onclick = () => { if (confirm('관리자 모드를 끌까요?')) { ls.set('pw', ''); location.reload(); } };
 
 /* ---------- 홈 ---------- */
-async function loadLib() {
-  const res = await Promise.all([call('getLibrary'), call('getSetlists')]);
+async function loadLib(fresh) {
+  const res = await Promise.all([fresh ? callFresh('getLibrary') : call('getLibrary'), fresh ? callFresh('getSetlists') : call('getSetlists')]);
   lib = res[0]; setlists = res[1]; byId = {};
   lib.genres.forEach(g => g.songs.forEach(s => byId[s.id] = { title: s.title, genre: g.name }));
   ALL = [];
@@ -757,6 +886,9 @@ function renderHome() {
     '<p class="small" style="text-align:center;margin-top:40px">곡이 없습니다.</p>';
 }
 function renderSets() {
+  const has = setlists.length > 0;                   // 묶음이 생긴 뒤에만 '연습곡 묶음' 탭이 나타남
+  $('#homeTabs').hidden = !has; $('#newSl2w').hidden = has;
+  if (!has && !$('#h-sets').hidden) { $('#h-sets').hidden = true; $('#h-songs').hidden = false; document.querySelectorAll('#home .tabs button').forEach(x => x.classList.toggle('on', x.dataset.h === 'songs')); }
   $('#slList').innerHTML = setlists.map(s => {
     const n = s.songs.filter(id => byId[id]).length;
     return `<div class="song" data-id="${s.id}"><span>${esc(s.title)}</span><span class="small">${n}곡 · ${esc(s.date || '')}</span></div>`;
@@ -766,7 +898,7 @@ $('#chips').onclick = e => { const f = e.target.dataset.f; if (f) { filter = f; 
 $('#q').oninput = renderHome;
 $('#grpSel').onchange = e => { grpKey = e.target.value; ls.set('grp', grpKey); renderHome(); };
 $('#sortSel').onchange = e => { sortKey = e.target.value; ls.set('sort', sortKey); renderHome(); };
-$('#reload').onclick = loadLib;
+$('#reload').onclick = async () => { busy('새로 불러오는 중…'); try { await loadLib(true); busy(false); toast('목록을 새로 불러왔어요'); } catch (e) { busy(false); } };
 $('#list').onclick = e => {
   const b = e.target.closest('.gpdf');
   if (b) {
@@ -864,7 +996,7 @@ function openSlDialog() {
   $('#slHead').textContent = editSlId ? '묶음 수정' : '연습곡 묶음 만들기';
   $('#slQ').value = ''; renderPick(); $('#sldlg').hidden = false;
 }
-$('#newSl').onclick = () => { editSlId = null; selOrder = []; $('#slTitle').value = ''; openSlDialog(); };
+$('#newSl').onclick = $('#newSl2').onclick = () => { editSlId = null; selOrder = []; $('#slTitle').value = ''; openSlDialog(); };
 $('#slEdit').onclick = () => { editSlId = curSl.id; selOrder = curSl.songs.filter(x => byId[x]); $('#slTitle').value = curSl.title; openSlDialog(); };
 $('#slCancel').onclick = () => $('#sldlg').hidden = true;
 function renderPick() {
@@ -1048,8 +1180,9 @@ async function openSong(id, genre, fr) {
   closeSheet(); recReset(); markRecent(id); setZoom(100); pgIdx = 0;
   view('song'); $('#stitle').textContent = '불러오는 중…'; $('#viewer').scrollTo(0, 0);
   const loading = refreshSong(id);
+  loading.catch(() => {});
   try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
-  await loading;
+  try { await loading; } catch (e) { view('home'); renderHome(); }
 }
 function setHist(hh) {
   hh = hh || {};
@@ -1061,13 +1194,21 @@ async function refreshSong(id) {
   const d = await call('getSong', id || S.id);
   S = d; SH = d.marks || {};
   try { MY = JSON.parse(ls.get('marks:' + S.id, '{}')); } catch (e) { MY = {}; }
-  $('#stitle').textContent = S.title; setFavBtn(); setEnhBtn(); syncEnhUp(); setHist(S.hist); renderDl(); updNb(); endArm = null; loadBm(); $('#eTitle').value = S.title; $('#eGenre').value = (byId[S.id] || {}).genre || '';
+  $('#stitle').textContent = S.title; setFavBtn(); syncEnhUp(); setHist(S.hist); renderDl(); updNb(); endArm = null; loadBm(); $('#eTitle').value = S.title; $('#eGenre').value = (byId[S.id] || {}).genre || '';
   renderPages(); renderPdfs(); renderMedia(); renderHist();
   if (role === 'admin') loadRecs();
 }
+async function mergeSong() {
+  const d = await kv.get('song:' + S.id); if (!d) return;
+  const same = JSON.stringify(d.images.map(i => i.id)) === JSON.stringify(S.images.map(i => i.id));
+  if (!same) { if (drawOn || shT) return; await refreshSong(S.id); return; }
+  S.audios = d.audios; S.links = d.links; S.pdfs = d.pdfs; renderPdfs();
+  if (!(document.activeElement && document.activeElement.closest && document.activeElement.closest('#sheet'))) renderMedia();
+  if (!drawOn && !shT) { SH = d.marks || {}; redrawAll(); }
+}
 /** 속성(음악·링크·PDF)만 새로 불러옴 — 악보는 건드리지 않음 */
 async function refreshProps() {
-  const d = await call('getSong', S.id);
+  const d = await callFresh('getSong', S.id);
   S.audios = d.audios; S.links = d.links; S.pdfs = d.pdfs;
   renderPdfs(); renderMedia();
   if (role === 'admin') loadRecs();
@@ -1098,10 +1239,9 @@ async function renderPages() {
     const d = document.createElement('div'); d.className = 'pg'; d.innerHTML = '<div class="ph">불러오는 중…</div>'; box.appendChild(d); return d;
   });
   applyMode(true);
-  for (let i = 0; i < S.images.length; i++) {
-    if (my !== tok) return;
+  const loadOne = async i => {
     const im = S.images[i];
-    try { cache[im.id] = cache[im.id] || await call('getImageData', im.id); } catch (e) { continue; }
+    try { cache[im.id] = cache[im.id] || await call('getImageData', im.id); } catch (e) { return; }
     if (my !== tok) return;
     divs[i].innerHTML = `<img><canvas data-id="${im.id}"></canvas>`;
     const im0 = divs[i].querySelector('img');
@@ -1111,7 +1251,10 @@ async function renderPages() {
     });
     showImg(im0, im.id);
     setupCanvas(divs[i], im.id);
-  }
+  };
+  let nx = 0;
+  const worker = async () => { while (my === tok) { const i = nx++; if (i >= S.images.length) return; await loadOne(i); } };
+  await Promise.all([worker(), worker(), worker()]);
 }
 function renderPdfs() {
   $('#pdfs').innerHTML = S.pdfs.map(p => `<div class="item"><div class="t"><span>${esc(p.name)}</span>
@@ -1122,10 +1265,7 @@ $('#pdfs').onclick = async e => {
   const id = e.target.dataset.pd; if (!id || !confirm('이 PDF 파일을 삭제할까요?')) return;
   try { await call('trashItem', id); await refreshProps(); } catch (err) {}
 };
-$('#pdfBtn').onclick = async () => {
-  busy('PDF 만드는 중… (페이지가 많으면 조금 걸려요)');
-  try { await call('makePdf', S.id); busy(false); toast('PDF가 준비됐어요'); await refreshProps(); } catch (e) { busy(false); }
-};
+$('#pdfBtn').onclick = () => { closeSheet(); setPdf(S.title, [S.id]); };
 
 /* ---------- 선명하게(흑백 보정) ---------- */
 /** 캔버스를 제자리에서 보정: 그림자·회색 배경을 지우고 글씨를 또렷하게 */
@@ -1147,31 +1287,9 @@ function enhanceCanvas(c) {
   }
   x.putImageData(d, 0, 0);
 }
-const enhCache = {};
-let enhView = ls.get('enhView', '0') === '1';
 function loadImg(src) { return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; }); }
-async function enhUrl(id, src) {
-  if (enhCache[id]) return enhCache[id];
-  const im = await loadImg(src), c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
-  c.getContext('2d').drawImage(im, 0, 0); enhanceCanvas(c);
-  return (enhCache[id] = c.toDataURL('image/jpeg', .85));
-}
-async function showImg(img, id) {
-  const my = ++tok2; img.dataset.t = my;
-  if (!enhView) { img.src = cache[id]; return; }
-  try { const u = await enhUrl(id, cache[id]); if (img.dataset.t == my && enhView) img.src = u; } catch (e) {}
-}
-let tok2 = 0;
-function setEnhBtn() { $('#enhBtn').textContent = enhView ? '선명하게 보기 · 켬' : '선명하게 보기 · 끔'; }
-$('#enhBtn').onclick = async () => {
-  enhView = !enhView; ls.set('enhView', enhView ? '1' : '0'); setEnhBtn(); closeSheet();
-  if (enhView) busy('악보를 선명하게 만드는 중…');
-  for (const img of document.querySelectorAll('#pages img')) {
-    const id = img.parentNode.querySelector('canvas').dataset.id; await showImg(img, id);
-  }
-  busy(false);
-};
-const enhUp = () => ls.get('enhUp', '0') === '1';
+function showImg(img, id) { img.src = cache[id]; }
+const enhUp = () => ls.get('enhUp', '1') === '1';
 function syncEnhUp() { document.querySelectorAll('.enhUpChk').forEach(c => c.checked = enhUp()); }
 document.addEventListener('change', e => { if (e.target.classList && e.target.classList.contains('enhUpChk')) { ls.set('enhUp', e.target.checked ? '1' : '0'); syncEnhUp(); } });
 
@@ -1492,7 +1610,9 @@ function thumbOf(src, w, h) {
   c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .6);
 }
 /** 사진 한 장 → { b64: 큰 이미지, th: 작은 미리보기 } */
-function resize(file, max = 2000) {
+const JQ = 0.74, OUTMAX = 1800;
+const jpg64 = c => c.toDataURL('image/jpeg', JQ).split(',')[1];
+function resize(file, max = OUTMAX) {
   return new Promise((res, rej) => {
     const img = new Image(), u = URL.createObjectURL(file);
     img.onload = () => {
@@ -1500,8 +1620,8 @@ function resize(file, max = 2000) {
       const w = Math.round(img.width * sc), h = Math.round(img.height * sc);
       const c = document.createElement('canvas'); c.width = w; c.height = h;
       const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
-      if (enhUp()) enhanceCanvas(c);
-      URL.revokeObjectURL(u); res({ b64: c.toDataURL('image/jpeg', .85).split(',')[1], th: thumbOf(c, w, h) });
+      if (enhUp()) { scanFrom(img, img.width, img.height, { auto: true, enh: true }).then(r => { URL.revokeObjectURL(u); res(r); }, e => { URL.revokeObjectURL(u); rej(e); }); return; }
+      URL.revokeObjectURL(u); res({ b64: jpg64(c), th: thumbOf(c, w, h) });
     };
     img.onerror = () => { URL.revokeObjectURL(u); rej(new Error('읽을 수 없는 사진이에요')); };
     img.src = u;
@@ -1516,12 +1636,12 @@ async function* fromPdf(file) {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const v1 = page.getViewport({ scale: 1 });
-    const vp = page.getViewport({ scale: Math.min(3, 2000 / Math.max(v1.width, v1.height)) });
+    const vp = page.getViewport({ scale: Math.min(3, OUTMAX / Math.max(v1.width, v1.height)) });
     const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
     const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
     await page.render({ canvasContext: x, viewport: vp }).promise;
     if (enhUp()) enhanceCanvas(c);
-    yield { b64: c.toDataURL('image/jpeg', .85).split(',')[1], th: thumbOf(c, c.width, c.height) };
+    yield { b64: jpg64(c), th: thumbOf(c, c.width, c.height) };
     page.cleanup();
   }
   pdf.destroy();
@@ -1557,12 +1677,18 @@ async function* pagesFrom(files) {
     } catch (err) { toast((f.name || '파일') + ': 건너뛰었어요 (' + (err.message || err) + ')'); }
   }
 }
-async function uploadPages(songId, files) {
-  const stamp = Date.now(); let n = 0;
-  for await (const it of pagesFrom(sortFiles(files))) {
-    n++; busy(`악보 올리는 중… ${n}쪽`);
-    await call('uploadFile', songId, `p_${stamp}_${String(n).padStart(3, '0')}.jpg`, 'image/jpeg', it.b64);
-  }
+async function uploadPages(songId, files, scans) {
+  const stamp = Date.now(); let n = 0, err = null; const act = new Set();
+  const send = async it => {
+    n++; const nm = `p_${stamp}_${String(n).padStart(3, '0')}.jpg`; busy(`악보 올리는 중… ${n}쪽`);
+    const pr = call('uploadFile', songId, nm, 'image/jpeg', it.b64).catch(e => { err = err || e; }).then(() => act.delete(pr));
+    act.add(pr);
+    if (act.size >= 3) await Promise.race(act);
+  };
+  for (const it of (scans || [])) { await send(it); if (err) break; }
+  if (!err) for await (const it of pagesFrom(sortFiles(files || []))) { await send(it); if (err) break; }
+  await Promise.all([...act]);
+  if (err) throw err;
   if (!n) throw new Error('올릴 수 있는 악보 이미지가 없어요');
   return n;
 }
@@ -1572,8 +1698,205 @@ async function addFiles(inp) {
   try { busy('파일 읽는 중…'); const n = await uploadPages(S.id, files); busy(false); await refreshSong(); toast(`${n}쪽을 추가했어요`); }
   catch (e) { fail(e); }
 }
-$('#camIn').onchange = e => addFiles(e.target);
 $('#galIn').onchange = e => addFiles(e.target);
+$('#camBtn').onclick = () => { closeSheet(); openCam(async items => {
+  try { busy('악보 올리는 중…'); const n = await uploadPages(S.id, [], items); busy(false); await refreshSong(); toast(`${n}쪽을 추가했어요`); }
+  catch (e) { fail(e); }
+}); };
+
+/* ---------- 스캔: 악보 영역 찾기 → 반듯하게 펴기 → 배경 하얗게 ---------- */
+const hyp = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+const polyArea = q => { let a = 0; for (let i = 0; i < 4; i++) { const p = q[i], r = q[(i + 1) % 4]; a += p[0] * r[1] - r[0] * p[1]; } return Math.abs(a) / 2; };
+const convexQ = q => { let sg = 0; for (let i = 0; i < 4; i++) { const a = q[i], b = q[(i + 1) % 4], c = q[(i + 2) % 4]; const z = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]); if (Math.abs(z) < 1e-9) return false; if (!sg) sg = Math.sign(z); else if (Math.sign(z) !== sg) return false; } return true; };
+/** 작은 그림에서 '종이(밝고 큰 덩어리)'의 네 모서리를 찾음. 반환: [[x,y]×4] (왼위·오른위·오른아래·왼아래, 0~1) 또는 null */
+function detectDoc(src, sw, sh) {
+  const W = 192, H = Math.max(48, Math.round(W * sh / sw)), n = W * H;
+  const c = detectDoc.c || (detectDoc.c = document.createElement('canvas')); c.width = W; c.height = H;
+  const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(src, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data, g = new Float32Array(n), b = new Float32Array(n);
+  for (let i = 0; i < n; i++) g[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
+  b.set(g);
+  for (let y = 1; y < H - 1; y++) for (let xx = 1; xx < W - 1; xx++) {
+    let t = 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) t += g[(y + dy) * W + xx + dx]; b[y * W + xx] = t / 9;
+  }
+  const hist = new Uint32Array(256); for (let i = 0; i < n; i++) hist[Math.min(255, b[i] | 0)]++;
+  let sum = 0; for (let t = 0; t < 256; t++) sum += t * hist[t];
+  let wB = 0, sB = 0, best = -1, thr = 128;
+  for (let t = 0; t < 256; t++) {
+    wB += hist[t]; if (!wB) continue; const wF = n - wB; if (!wF) break; sB += t * hist[t];
+    const mB = sB / wB, mF = (sum - sB) / wF, v = wB * wF * (mB - mF) * (mB - mF); if (v > best) { best = v; thr = t; }
+  }
+  const m = new Uint8Array(n); for (let i = 0; i < n; i++) m[i] = b[i] > thr ? 1 : 0;
+  const seen = new Uint8Array(n), st = new Int32Array(n); let B = null;
+  for (let i0 = 0; i0 < n; i0++) {
+    if (!m[i0] || seen[i0]) continue;
+    let sp = 0, cnt = 0; st[sp++] = i0; seen[i0] = 1;
+    let mnS = 1e9, mxS = -1e9, mnD = 1e9, mxD = -1e9, a0, a1, a2, a3, bx0 = W, bx1 = 0, by0 = H, by1 = 0;
+    while (sp) {
+      const i = st[--sp], px = i % W, py = (i / W) | 0; cnt++;
+      const S = px + py, D = px - py;
+      if (S < mnS) { mnS = S; a0 = [px, py]; } if (S > mxS) { mxS = S; a2 = [px, py]; }
+      if (D > mxD) { mxD = D; a1 = [px, py]; } if (D < mnD) { mnD = D; a3 = [px, py]; }
+      if (px < bx0) bx0 = px; if (px > bx1) bx1 = px; if (py < by0) by0 = py; if (py > by1) by1 = py;
+      if (px > 0 && m[i - 1] && !seen[i - 1]) { seen[i - 1] = 1; st[sp++] = i - 1; }
+      if (px < W - 1 && m[i + 1] && !seen[i + 1]) { seen[i + 1] = 1; st[sp++] = i + 1; }
+      if (py > 0 && m[i - W] && !seen[i - W]) { seen[i - W] = 1; st[sp++] = i - W; }
+      if (py < H - 1 && m[i + W] && !seen[i + W]) { seen[i + W] = 1; st[sp++] = i + W; }
+    }
+    if (!B || cnt > B.cnt) B = { cnt: cnt, q: [a0, a1, a2, a3], bb: [bx0, by0, bx1 + 1, by1 + 1] };
+  }
+  if (!B || B.cnt < n * 0.12) return null;
+  const nq = q => q.map(p => [(p[0] + 0.5) / W, (p[1] + 0.5) / H]);
+  const ok = q => { const ar = polyArea(q); return ar > 0.18 && convexQ(q) && Math.min(hyp(q[0], q[1]), hyp(q[3], q[2]), hyp(q[0], q[3]), hyp(q[1], q[2])) > 0.12 && (B.cnt / n) / ar > 0.55; };
+  let q = nq(B.q);
+  if (!ok(q)) {                                       // 모양이 이상하면 덩어리를 감싸는 네모로
+    const bb = B.bb, bw = (bb[2] - bb[0]) * (bb[3] - bb[1]);
+    if (B.cnt / bw < 0.6) return null;
+    q = [[bb[0] / W, bb[1] / H], [bb[2] / W, bb[1] / H], [bb[2] / W, bb[3] / H], [bb[0] / W, bb[3] / H]];
+    if (polyArea(q) < 0.18) return null;
+  }
+  return q;
+}
+/** 네 모서리 q(0~1)를 직사각형으로 펴서 긴 변이 outMax가 되도록 만든 캔버스 */
+function warpQuad(src, sw, sh, q, outMax) {
+  let P = q.map(p => [p[0] * sw, p[1] * sh]);
+  const cx = P.reduce((t, p) => t + p[0], 0) / 4, cy = P.reduce((t, p) => t + p[1], 0) / 4;
+  P = P.map(p => [p[0] + (cx - p[0]) * 0.012, p[1] + (cy - p[1]) * 0.012]);   // 가장자리 그림자 제거
+  const W = (hyp(P[0], P[1]) + hyp(P[3], P[2])) / 2, Hh = (hyp(P[0], P[3]) + hyp(P[1], P[2])) / 2;
+  if (W < 20 || Hh < 20) throw new Error('too small');
+  const f = Math.min(1, outMax / Math.max(W, Hh));
+  const xs = P.map(p => p[0]), ys = P.map(p => p[1]);
+  const bx = Math.max(0, Math.floor(Math.min(...xs)) - 2), by = Math.max(0, Math.floor(Math.min(...ys)) - 2);
+  const bw = Math.min(sw, Math.ceil(Math.max(...xs)) + 2) - bx, bh = Math.min(sh, Math.ceil(Math.max(...ys)) + 2) - by;
+  const sc = document.createElement('canvas'); sc.width = Math.max(2, Math.round(bw * f)); sc.height = Math.max(2, Math.round(bh * f));
+  const sx = sc.getContext('2d', { willReadFrequently: true }); sx.imageSmoothingQuality = 'high'; sx.drawImage(src, bx, by, bw, bh, 0, 0, sc.width, sc.height);
+  const kx = sc.width / bw, ky = sc.height / bh, Q = P.map(p => [(p[0] - bx) * kx, (p[1] - by) * ky]);
+  const SW = sc.width, SH = sc.height, sd = sx.getImageData(0, 0, SW, SH).data;
+  let OW = Math.max(16, Math.round(W * f)), OH = Math.max(16, Math.round(Hh * f));
+  const asp = OW / OH;                                // 원근 때문에 생기는 비율 오차: A4(1:1.414)에 가까우면 A4로 맞춤
+  if (Math.abs(asp - 0.7071) < 0.075) OW = Math.round(OH * 0.7071); else if (Math.abs(asp - 1.4142) < 0.15) OH = Math.round(OW * 0.7071);
+  const out = document.createElement('canvas'); out.width = OW; out.height = OH;
+  const ox = out.getContext('2d'), od = ox.createImageData(OW, OH), o = od.data;
+  const [p0, p1, p2, p3] = Q;
+  const dx1 = p1[0] - p2[0], dx2 = p3[0] - p2[0], dx3 = p0[0] - p1[0] + p2[0] - p3[0];
+  const dy1 = p1[1] - p2[1], dy2 = p3[1] - p2[1], dy3 = p0[1] - p1[1] + p2[1] - p3[1];
+  let ga = 0, ha = 0, a, bb, cc, d, e, ff;
+  if (Math.abs(dx3) < 1e-9 && Math.abs(dy3) < 1e-9) { a = p1[0] - p0[0]; bb = p3[0] - p0[0]; d = p1[1] - p0[1]; e = p3[1] - p0[1]; }
+  else {
+    const den = dx1 * dy2 - dx2 * dy1;
+    ga = (dx3 * dy2 - dx2 * dy3) / den; ha = (dx1 * dy3 - dx3 * dy1) / den;
+    a = p1[0] - p0[0] + ga * p1[0]; bb = p3[0] - p0[0] + ha * p3[0]; d = p1[1] - p0[1] + ga * p1[1]; e = p3[1] - p0[1] + ha * p3[1];
+  }
+  cc = p0[0]; ff = p0[1];
+  for (let j = 0; j < OH; j++) {
+    const v = (j + 0.5) / OH;
+    for (let i = 0; i < OW; i++) {
+      const u = (i + 0.5) / OW, den = ga * u + ha * v + 1;
+      let X = (a * u + bb * v + cc) / den - 0.5, Y = (d * u + e * v + ff) / den - 0.5;
+      X = X < 0 ? 0 : X > SW - 1.001 ? SW - 1.001 : X; Y = Y < 0 ? 0 : Y > SH - 1.001 ? SH - 1.001 : Y;
+      const x0 = X | 0, y0 = Y | 0, fx = X - x0, fy = Y - y0, i00 = (y0 * SW + x0) * 4, i10 = i00 + 4, i01 = i00 + SW * 4, i11 = i01 + 4, k = (j * OW + i) * 4;
+      const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+      o[k] = sd[i00] * w00 + sd[i10] * w10 + sd[i01] * w01 + sd[i11] * w11;
+      o[k + 1] = sd[i00 + 1] * w00 + sd[i10 + 1] * w10 + sd[i01 + 1] * w01 + sd[i11 + 1] * w11;
+      o[k + 2] = sd[i00 + 2] * w00 + sd[i10 + 2] * w10 + sd[i01 + 2] * w01 + sd[i11 + 2] * w11;
+      o[k + 3] = 255;
+    }
+  }
+  ox.putImageData(od, 0, 0);
+  return out;
+}
+/** 사진 한 장 → 악보 영역만 펴서(자동 맞춤) 하얗게 보정(스캔 보정) → 작게 압축 */
+async function scanFrom(src, sw, sh, o) {
+  let out = null, cropped = false;
+  const q = o.auto ? detectDoc(src, sw, sh) : null;
+  if (q) { try { out = warpQuad(src, sw, sh, q, OUTMAX); cropped = true; } catch (e) { out = null; } }
+  if (!out) {
+    const f = Math.min(1, OUTMAX / Math.max(sw, sh));
+    out = document.createElement('canvas'); out.width = Math.max(1, Math.round(sw * f)); out.height = Math.max(1, Math.round(sh * f));
+    const x = out.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, out.width, out.height); x.imageSmoothingQuality = 'high'; x.drawImage(src, 0, 0, out.width, out.height);
+  }
+  if (o.enh) enhanceCanvas(out);
+  return { b64: jpg64(out), th: thumbOf(out, out.width, out.height), cropped: cropped };
+}
+
+/* ---------- 스캔 카메라: 찍으면 바로 다음 쪽 ---------- */
+const CAM = { st: null, items: [], q: Promise.resolve(), cb: null, timer: 0, ic: null, shooting: false,
+  auto: ls.get('camAuto', '1') === '1', enh: ls.get('camEnh', '1') === '1' };
+const camMsg = t => { $('#camMsg').textContent = t || ''; };
+function camCount() { const n = CAM.items.filter(x => x.b64).length; $('#camT').textContent = n ? n + '쪽 찍음' : ''; }
+function camStrip() {
+  const el = $('#camStrip');
+  el.innerHTML = CAM.items.map((it, i) => `<div class="ct ${it.wait ? 'w' : ''}" data-i="${i}">${it.th ? `<img src="${it.th}">` : ''}<i>${i + 1}</i></div>`).join('');
+  el.scrollLeft = el.scrollWidth; camCount();
+}
+$('#camStrip').onclick = e => {
+  const t = e.target.closest('.ct'); if (!t) return; const i = +t.dataset.i, it = CAM.items[i]; if (!it || it.wait) return;
+  if (confirm(`${i + 1}쪽을 지울까요?`)) { CAM.items.splice(i, 1); camStrip(); }
+};
+async function openCam(cb) {
+  CAM.cb = cb; CAM.items = []; CAM.q = Promise.resolve(); CAM.shooting = false;
+  $('#camAuto').classList.toggle('on', CAM.auto); $('#camEnh').classList.toggle('on', CAM.enh);
+  $('#camV').style.display = ''; $('#camShot').hidden = false; $('#camDone').hidden = false; $('#camFbRow').hidden = true;
+  camStrip(); camMsg(''); $('#cam').hidden = false; document.body.style.overflow = 'hidden';
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('no camera api');
+    CAM.st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 3840 }, height: { ideal: 2160 } }, audio: false });
+    const v = $('#camV'); v.srcObject = CAM.st; try { await v.play(); } catch (e) {}
+    CAM.ic = null; try { if (window.ImageCapture) CAM.ic = new ImageCapture(CAM.st.getVideoTracks()[0]); } catch (e) {}
+    clearInterval(CAM.timer); CAM.timer = setInterval(camLive, 400);
+    camMsg('악보를 화면에 맞추고 동그라미를 누르세요. 찍으면 바로 다음 쪽을 찍을 수 있어요');
+  } catch (e) { camFallback(); }
+}
+function camFallback() {
+  $('#camV').style.display = 'none'; $('#camShot').hidden = true; $('#camDone').hidden = true; $('#camFbRow').hidden = false;
+  camMsg('카메라를 바로 켤 수 없어요. 아래 버튼으로 카메라 앱을 열어 한 쪽씩 찍어 주세요 (찍으면 이 화면으로 돌아와요)');
+}
+function camLive() {
+  const v = $('#camV'), o = $('#camO'); if (!v.videoWidth || document.hidden || $('#cam').hidden) return;
+  const r = v.getBoundingClientRect(), w = Math.round(r.width), h = Math.round(r.height);
+  if (o.width !== w || o.height !== h) { o.width = w; o.height = h; }
+  const cx = o.getContext('2d'); cx.clearRect(0, 0, w, h);
+  if (!CAM.auto) return;
+  const q = detectDoc(v, v.videoWidth, v.videoHeight); if (!q) return;
+  const va = v.videoWidth / v.videoHeight, ea = w / h; let dw, dh, ox = 0, oy = 0;
+  if (va > ea) { dw = w; dh = w / va; oy = (h - dh) / 2; } else { dh = h; dw = h * va; ox = (w - dw) / 2; }
+  cx.beginPath(); q.forEach((p, i) => { const X = ox + p[0] * dw, Y = oy + p[1] * dh; i ? cx.lineTo(X, Y) : cx.moveTo(X, Y); }); cx.closePath();
+  cx.fillStyle = 'rgba(120,230,150,.16)'; cx.fill(); cx.lineWidth = 3; cx.strokeStyle = '#8CF0A8'; cx.stroke();
+}
+function camEnqueue(src, sw, sh) {
+  const it = { wait: true }; CAM.items.push(it); camStrip();
+  CAM.q = CAM.q.then(async () => {
+    try { Object.assign(it, await scanFrom(src, sw, sh, { auto: CAM.auto, enh: CAM.enh }), { wait: false }); }
+    catch (e) { const i = CAM.items.indexOf(it); if (i >= 0) CAM.items.splice(i, 1); toast('이 쪽을 처리하지 못했어요. 다시 찍어 주세요'); }
+    camStrip();
+  });
+}
+async function camShot() {
+  const v = $('#camV'); if (CAM.shooting || !v.videoWidth) return; CAM.shooting = true;
+  const fl = $('#camFlash'); fl.style.opacity = .7; setTimeout(() => fl.style.opacity = 0, 90);
+  let src = null, sw = 0, sh = 0;
+  if (CAM.ic) { try { const bl = await CAM.ic.takePhoto(); src = await createImageBitmap(bl); sw = src.width; sh = src.height; } catch (e) { CAM.ic = null; src = null; } }
+  if (!src) { const c = document.createElement('canvas'); sw = c.width = v.videoWidth; sh = c.height = v.videoHeight; c.getContext('2d').drawImage(v, 0, 0); src = c; }
+  CAM.shooting = false; camEnqueue(src, sw, sh);
+}
+$('#camShot').onclick = camShot;
+$('#camFile').onchange = async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { const bm = await createImageBitmap(f); camEnqueue(bm, bm.width, bm.height); } catch (er) { toast('읽을 수 없는 사진이에요'); }
+};
+$('#camAuto').onclick = () => { CAM.auto = !CAM.auto; ls.set('camAuto', CAM.auto ? '1' : '0'); $('#camAuto').classList.toggle('on', CAM.auto); camLive(); };
+$('#camEnh').onclick = () => { CAM.enh = !CAM.enh; ls.set('camEnh', CAM.enh ? '1' : '0'); $('#camEnh').classList.toggle('on', CAM.enh); };
+async function camClose(done) {
+  const n = CAM.items.filter(x => x.b64 || x.wait).length;
+  if (!done && n && !confirm(`찍은 ${n}쪽을 올리지 않고 닫을까요?`)) return;
+  clearInterval(CAM.timer); await CAM.q;
+  try { CAM.st && CAM.st.getTracks().forEach(t => t.stop()); } catch (e) {}
+  CAM.st = null; CAM.ic = null; $('#camV').srcObject = null; $('#cam').hidden = true; document.body.style.overflow = '';
+  const items = CAM.items.filter(x => x.b64); CAM.items = [];
+  if (done && items.length && CAM.cb) CAM.cb(items);
+}
+$('#camX').onclick = () => camClose(false);
+$('#camDone').onclick = $('#camDone2').onclick = () => camClose(true);
 
 /* ---------- 페이지 순서 바꾸기 / 삭제 ---------- */
 function renderOrd() {
@@ -1773,7 +2096,7 @@ $('#recs').onclick = async e => {
 
 /* ---------- 새 곡 (관리자) ---------- */
 $('#addBtn').onclick = () => { syncEnhUp();
-  newFiles = []; autoTitle = ''; $('#nTitle').value = '';
+  newFiles = []; newScans = []; autoTitle = ''; $('#nTitle').value = '';
   ['nStart', 'nStage', 'nPDate', 'nPlace'].forEach(i => $('#' + i).value = '');
   $('#nInfo').textContent = '선택한 파일 0개 (나중에 추가해도 됩니다)';
   const g = lib.genres.find(x => x.id === filter); $('#nGenre').value = g ? g.name : ''; $('#dlg').hidden = false;
@@ -1783,12 +2106,16 @@ function pick(inp) {
   const fs = [...inp.files]; inp.value = ''; if (!fs.length) return;
   newFiles = newFiles.concat(fs);
   const sorted = sortFiles(newFiles);
-  $('#nInfo').textContent = `선택한 파일 ${newFiles.length}개: ` + sorted.map(f => f.name).slice(0, 3).join(', ') + (newFiles.length > 3 ? ' …' : '');
+  nInfo();
   const t = $('#nTitle');
   if (!t.value.trim() || t.value === autoTitle) { autoTitle = baseOf(sorted[0].name).replace(/_+/g, ' ').trim(); t.value = autoTitle; }
 }
-$('#nCam').onchange = e => pick(e.target);
 $('#nGal').onchange = e => pick(e.target);
+function nInfo() {
+  const parts = []; if (newFiles.length) parts.push(`파일 ${newFiles.length}개`); if (newScans.length) parts.push(`촬영 ${newScans.length}쪽`);
+  $('#nInfo').textContent = parts.length ? '선택: ' + parts.join(' · ') : '선택한 파일 0개 (나중에 추가해도 됩니다)';
+}
+$('#nCamBtn').onclick = () => openCam(items => { newScans = newScans.concat(items); nInfo(); });
 $('#nOk').onclick = async () => {
   const genre = $('#nGenre').value.trim(), title = $('#nTitle').value.trim();
   if (!title) return toast('곡명을 입력하세요');
@@ -1799,23 +2126,59 @@ $('#nOk').onclick = async () => {
     const pf = { stage: $('#nStage').value.trim(), date: $('#nPDate').value, place: $('#nPlace').value.trim(), note: '' };
     if (pf.stage || pf.date || pf.place) h.perfs.push(pf);
     if (h.start || h.perfs.length) await call('saveHistory', id, h);
-    if (newFiles.length) await uploadPages(id, newFiles);
+    if (newFiles.length || newScans.length) await uploadPages(id, newFiles, newScans);
     await loadLib(); busy(false);
     await openSong(id, byId[id] ? byId[id].genre : '', 'home');
   } catch (e) { fail(e); }
 };
 
-/* ---------- 묶음 PDF (무대별·연습곡 묶음) ---------- */
-async function setPdf(title, ids) {
+/* ---------- 인쇄용 PDF: 이 기기에서 바로 만들어요 (서버 대기 없음, 받아 둔 곡은 인터넷 없이도) ---------- */
+LIBS.jspdf = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+let PD = { title: '', ids: [], blob: null, url: '', name: '' };
+function setPdf(title, ids) {
   if (!ids.length) return toast('곡이 없어요');
-  if (ids.length > 12) return toast('한 번에 12곡까지 가능해요');
-  busy(`${ids.length}곡 PDF 만드는 중… (1~2분 걸릴 수 있어요)`);
-  try {
-    const r = await call('makeSetPdf', title, ids); busy(false);
-    $('#prT').textContent = title; $('#prI').textContent = `${ids.length}곡 · ${r.pages}쪽 · A4`;
-    $('#prOpen').href = r.url; $('#prDl').href = r.downloadUrl; $('#pdfres').hidden = false;
-  } catch (e) { fail(e); }
+  if (ids.length > 20) return toast('한 번에 20곡까지 가능해요');
+  if (PD.url) { try { URL.revokeObjectURL(PD.url); } catch (e) {} }
+  PD = { title: title, ids: ids, blob: null, url: '', name: String(title).replace(/[\\/:*?"<>|]/g, ' ').trim().slice(0, 60) + ' 악보.pdf' };
+  $('#prT').textContent = title; $('#prI').textContent = ids.length > 1 ? `${ids.length}곡 · A4 인쇄용 PDF` : 'A4 인쇄용 PDF';
+  $('#prBw').checked = ls.get('pdfBw', '0') === '1';
+  $('#prOpt').style.display = ''; $('#prDone').style.display = 'none'; $('#pdfres').hidden = false;
 }
+async function buildPdf(ids, bw, prog) {
+  await needLib('jspdf');
+  const J = window.jspdf.jsPDF, pages = [];
+  for (const id of ids) { const d = await call('getSong', id); d.images.forEach(im => pages.push(im.id)); }
+  if (!pages.length) throw new Error('악보 사진이 없어요');
+  let doc = null, n = 0;
+  for (const pid of pages) {
+    prog(++n, pages.length);
+    const data = cache[pid] || (cache[pid] = await call('getImageData', pid));
+    const im = await loadImg(data); let use = data; const w = im.naturalWidth, h = im.naturalHeight;
+    if (bw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0); enhanceCanvas(c); use = c.toDataURL('image/jpeg', .8); }
+    const land = w > h * 1.15, PW = land ? 297 : 210, PH = land ? 210 : 297, M = 7, sc = Math.min((PW - 2 * M) / w, (PH - 2 * M) / h), dw = w * sc, dh = h * sc;
+    if (!doc) doc = new J({ unit: 'mm', format: 'a4', orientation: land ? 'l' : 'p', compress: true }); else doc.addPage('a4', land ? 'l' : 'p');
+    doc.addImage(use, /^data:image\/png/.test(use) ? 'PNG' : 'JPEG', (PW - dw) / 2, (PH - dh) / 2, dw, dh, undefined, 'FAST');
+    await new Promise(r => setTimeout(r, 0));
+  }
+  return { blob: doc.output('blob'), pages: n };
+}
+$('#prGo').onclick = async () => {
+  const bw = $('#prBw').checked; ls.set('pdfBw', bw ? '1' : '0'); $('#pdfres').hidden = true;
+  busy('PDF 준비 중…');
+  try {
+    const r = await buildPdf(PD.ids, bw, (i, t) => busy(`PDF 만드는 중… ${i}/${t}쪽`));
+    PD.blob = r.blob; PD.url = URL.createObjectURL(r.blob); busy(false);
+    $('#prInfo2').textContent = `${r.pages}쪽 · ${r.blob.size < 1048576 ? Math.round(r.blob.size / 1024) + ' KB' : mb(r.blob.size)} · 용지 A4`;
+    $('#prOpen').href = PD.url; $('#prDl').href = PD.url; $('#prDl').setAttribute('download', PD.name);
+    let can = false; try { can = !!(navigator.canShare && navigator.canShare({ files: [new File([r.blob], PD.name, { type: 'application/pdf' })] })); } catch (e) {}
+    $('#prShare').style.display = can ? '' : 'none';
+    $('#prOpt').style.display = 'none'; $('#prDone').style.display = 'grid'; $('#pdfres').hidden = false;
+  } catch (e) { fail(e); }
+};
+$('#prShare').onclick = async () => {
+  try { await navigator.share({ files: [new File([PD.blob], PD.name, { type: 'application/pdf' })], title: PD.title }); }
+  catch (e) { if (!e || e.name !== 'AbortError') toast('공유를 열 수 없어요. 아래 다운로드를 눌러 주세요'); }
+};
 $('#prX').onclick = () => $('#pdfres').hidden = true;
 
 /* ---------- 여러 곡 한꺼번에 (나누기) ---------- */
