@@ -1,5 +1,5 @@
 // 앱 화면 파일을 이 기기에 저장해 두어, 인터넷이 없어도 앱이 바로 열리게 합니다.
-const V = 'harmonia-v001';
+const V = 'harmonia-v005';
 const SHELL = ['./', 'index.html', 'config.js', 'manifest.json', 'icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

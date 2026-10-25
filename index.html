@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#00462a">
-<meta name="app-version" content="v001 2026-10-25">
+<meta name="app-version" content="v005 2026-10-26">
 <meta property="og:title" content="아르모니아 Harmonia Music Box">
 <meta property="og:description" content="합창단 악보 · 연습 · 필기">
 <meta name="format-detection" content="telephone=no">
@@ -130,6 +130,7 @@ a.btn{text-decoration:none;display:block}
 #list .song:last-child,#slList .song:last-child{border-bottom-color:transparent!important}
 /* ===== v8 오프라인·태블릿 ===== */
 .mk{display:flex;align-items:center;gap:8px;color:var(--acc)}
+.lsdel{padding:4px 10px;font-size:13px;color:var(--sub);background:transparent;border:1px solid var(--line);border-radius:99px;margin-left:6px}
 .dli{font-style:normal;font-size:11.5px;background:var(--accs);color:var(--acc);padding:2px 8px;border-radius:99px;font-weight:600}
 #dlRow .btn{padding:13px}
 #offline{position:fixed;top:calc(6px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:30;background:#26302b;color:#fff;font-size:12.5px;padding:5px 14px;border-radius:99px;opacity:.9;pointer-events:none;white-space:nowrap}
@@ -237,6 +238,23 @@ details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:
 .adm{display:none!important}.admb{display:none!important}
 body.admin .adm{display:inline-block!important}
 body.admin .admb{display:block!important}
+#vtitle{position:absolute;top:calc(14px + env(safe-area-inset-top));left:12px;max-width:calc(100% - 200px);padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.88);color:var(--ink);font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 6px rgba(0,0,0,.2);pointer-events:none;z-index:6;opacity:.8}
+#vtitle:empty{display:none}
+#cropdlg{position:fixed;inset:0;z-index:30;background:#1c2420;display:flex;flex-direction:column}
+#cropdlg[hidden]{display:none}
+#cropMsg{color:#fff;text-align:center;font-size:14px;padding:calc(10px + env(safe-area-inset-top)) 12px 8px}
+#cropStage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:14px}
+#cropWrap{position:relative;display:inline-block;line-height:0;touch-action:none;user-select:none}
+#cropImg{display:block;max-width:calc(100vw - 28px);max-height:calc(100vh - 150px);pointer-events:none}
+#cropBox{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.55);touch-action:none;cursor:move}
+#cropBox i{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#fff;border:3px solid var(--acc);touch-action:none}
+#cropBox i::after{content:"";position:absolute;inset:-12px}
+#cropBox i[data-h=nw]{left:0;top:0}#cropBox i[data-h=n]{left:50%;top:0}#cropBox i[data-h=ne]{left:100%;top:0}
+#cropBox i[data-h=e]{left:100%;top:50%}#cropBox i[data-h=se]{left:100%;top:100%}#cropBox i[data-h=s]{left:50%;top:100%}
+#cropBox i[data-h=sw]{left:0;top:100%}#cropBox i[data-h=w]{left:0;top:50%}
+#cropBar{display:flex;gap:10px;padding:10px 14px calc(14px + env(safe-area-inset-bottom))}
+#cropBar button{flex:1;padding:14px}#cropBar .pri{flex:2;background:#fff;color:var(--acc);border-color:#fff;font-weight:700}
+#cropEnhL{display:block;margin-top:8px;font-size:15px;font-weight:600}
 </style>
 </head>
 <body>
@@ -278,7 +296,7 @@ body.admin .admb{display:block!important}
     <button class="btn pri adm" id="newSl">＋ 묶음 만들기</button>
     <div id="slList" style="margin-top:10px"></div>
   </div>
-  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v001 · 2026-10-25</p>
+  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v005 · 2026-10-26</p>
   <button class="fab adm" id="addBtn">＋ 새 곡</button>
 </div>
 
@@ -293,7 +311,8 @@ body.admin .admb{display:block!important}
 <div id="song" hidden>
   <div id="viewer"><div id="pages"></div></div>
   <div id="pgInd"></div>
-  <div id="fbar"><button id="drawBtn" aria-label="필기"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/></svg></button><button id="menuBtn" aria-label="메뉴"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
+  <div id="vtitle"></div>
+  <div id="fbar"><button id="listBtn" aria-label="목록으로"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r=".9" fill="currentColor"/><circle cx="4.6" cy="12" r=".9" fill="currentColor"/><circle cx="4.6" cy="18" r=".9" fill="currentColor"/></svg></button><button id="drawBtn" aria-label="필기"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/></svg></button><button id="menuBtn" aria-label="메뉴"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
 </div>
 
 <!-- 곡 메뉴·속성: 악보 위에 덮이는 창 (닫으면 악보 그대로) -->
@@ -376,13 +395,13 @@ body.admin .admb{display:block!important}
     </details>
 
     <details id="dAdm" class="admb">
-      <summary>관리 · 악보 추가 · 순서 · 삭제</summary>
+      <summary>관리 · 악보 추가 · 순서 · 자르기 · 삭제</summary>
       <div class="tools" style="margin-top:8px">
         <button id="camBtn" class="btn adm">📷 스캔 촬영</button>
         <label class="btn adm">파일 추가<input type="file" id="galIn" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
-        <button id="editBtn" class="adm">↕ 순서·삭제</button>
+        <button id="editBtn" class="adm">↕ 순서·자르기·삭제</button>
       </div>
-<label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 스캔 보정: 악보 부분만 자동으로 잘라 배경을 하얗게, 글씨를 선명하게 (파일도 작아져요)</label>
+<label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 밝고 깨끗하게: 그림자만 펴고 종이를 하얗게 (흑백으로 바꾸지는 않아요)</label>
       <h3>곡 이름 · 장르 바꾸기</h3>
       <div class="row"><input id="eTitle" placeholder="곡명"></div>
       <div class="row"><input id="eGenre" list="gl" placeholder="장르"><button id="eSave" class="btn pri">저장</button></div>
@@ -406,7 +425,7 @@ body.admin .admb{display:block!important}
       <button id="nCamBtn" class="btn">📷 스캔 촬영</button>
       <label class="btn">파일 선택 (사진·PDF·ZIP)<input type="file" id="nGal" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
     </div>
-    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 스캔 보정: 악보 부분만 자동으로 잘라 배경을 하얗게, 글씨를 선명하게 (파일도 작아져요)</label>
+    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 밝고 깨끗하게: 그림자만 펴고 종이를 하얗게 (흑백으로 바꾸지는 않아요)</label>
     <div class="small" id="nInfo">선택한 파일 0개 (나중에 추가해도 됩니다)</div>
     <details>
       <summary>연습·공연 이력 넣기 (선택)</summary>
@@ -459,7 +478,7 @@ body.admin .admb{display:block!important}
   <div id="camBox">
     <video id="camV" playsinline muted autoplay></video>
     <canvas id="camO"></canvas><div id="camFlash"></div>
-    <div id="camTop"><button id="camX">닫기</button><button id="camAuto" class="on">자동 맞춤</button><button id="camEnh" class="on">스캔 보정</button><span id="camT"></span></div>
+    <div id="camTop"><button id="camX">닫기</button><button id="camAuto" hidden>자동 맞춤</button><button id="camEnh" hidden>스캔 보정</button><span id="camT"></span></div>
     <div id="camMsg"></div>
   </div>
   <div id="camBot">
@@ -470,7 +489,7 @@ body.admin .admb{display:block!important}
 </div>
 <div id="pdfres" class="ov" hidden><div class="box"><b id="prT"></b><div class="small" id="prI"></div>
   <div id="prOpt">
-    <label class="small" style="display:block;margin:2px 0 8px"><input type="checkbox" id="prBw"> 흑백으로 또렷하게 (인쇄·잉크 절약 · 이때만 보정하므로 화면은 느려지지 않아요)</label>
+    <label class="small" hidden style="display:block;margin:2px 0 8px"><input type="checkbox" id="prBw"> 흑백으로 또렷하게 (인쇄·잉크 절약 · 이때만 보정하므로 화면은 느려지지 않아요)</label>
     <button id="prGo" class="btn pri" style="width:100%;padding:13px">PDF 만들기</button>
   </div>
   <div id="prDone" style="display:none;gap:8px">
@@ -487,7 +506,7 @@ body.admin .admb{display:block!important}
     <div class="small">여러 곡이 묶인 PDF·ZIP을 올리면, 다음 화면에서 곡이 시작되는 쪽만 눌러 나눕니다. PDF·ZIP을 여러 개 고르면 파일 하나가 곡 하나로 미리 나뉘고, ZIP 안에 곡별 폴더가 있으면 폴더 이름이 곡명이 됩니다.</div>
     <input id="bkGenre" list="gl" placeholder="장르 (모든 곡에 기본으로 적용, 곡마다 바꿀 수 있어요)">
     <label class="btn">파일 선택 (PDF·ZIP·사진)<input type="file" id="bkFile" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
-    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 스캔 보정: 악보 부분만 자동으로 잘라 배경을 하얗게, 글씨를 선명하게 (파일도 작아져요)</label>
+    <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 밝고 깨끗하게: 그림자만 펴고 종이를 하얗게 (흑백으로 바꾸지는 않아요)</label>
     <div class="small" id="bkInfo">선택한 파일 0개</div>
     <div class="row"><button id="bkCancel">취소</button><button id="bkGo" class="btn pri" style="flex:1">쪽 불러오기</button></div>
   </div>
@@ -501,11 +520,17 @@ body.admin .admb{display:block!important}
 <!-- 페이지 순서 -->
 <div id="orddlg" class="ov" hidden>
   <div class="box">
-    <b>페이지 순서 바꾸기</b>
-    <div class="small">▲▼로 위치를 바꾸고 '삭제'로 지울 수 있어요. 끝나면 '순서 저장'을 누르세요.</div>
+    <b>페이지 순서 · 자르기 · 삭제</b>
+    <div class="small">▲▼로 위치를 바꾸고 '삭제'로 지울 수 있어요. 끝나면 '순서 저장'을 누르세요. '자르기'는 누르면 바로 저장돼요.</div>
     <div id="ordList"></div>
     <div class="row"><button id="ordCancel">취소</button><button id="ordOk" class="btn pri" style="flex:1">순서 저장</button></div>
   </div>
+</div>
+<!-- 악보 자르기 -->
+<div id="cropdlg" hidden>
+  <div id="cropMsg">네 모서리와 변의 동그라미를 끌어서 악보만 남기세요<label id="cropEnhL"><input type="checkbox" id="cropEnh"> 밝고 깨끗하게 (그림자 없애기)</label></div>
+  <div id="cropStage"><div id="cropWrap"><img id="cropImg" alt=""><div id="cropBox"><i data-h="nw"></i><i data-h="n"></i><i data-h="ne"></i><i data-h="e"></i><i data-h="se"></i><i data-h="s"></i><i data-h="sw"></i><i data-h="w"></i></div></div></div>
+  <div id="cropBar"><button id="cropCancel">취소</button><button id="cropAll">전체로</button><button id="cropOk" class="btn pri">자르기 저장</button></div>
 </div>
 <datalist id="stageDL"></datalist><datalist id="placeDL"></datalist>
 
@@ -591,6 +616,7 @@ const kv = (() => {
   return { get: k => tx('readonly', st => st.get(k)).catch(() => undefined), set: (k, v) => tx('readwrite', st => st.put(v, k)).catch(() => {}), del: k => tx('readwrite', st => st.delete(k)).catch(() => {}) };
 })();
 class AppErr extends Error {}
+const NOSERVER = '서버에 연결할 수 없어요. 인터넷을 확인하고, 계속되면 운영자에게 알려 주세요';
 const NEEDNET = '인터넷에 연결되면 사용할 수 있어요';
 const LONG = { makePdf: 300000, makeSetPdf: 300000, uploadFile: 120000, submitRecording: 120000 };
 const WRITES = new Set(['createSong', 'uploadFile', 'saveLinks', 'trashItem', 'trashSong', 'saveOrder', 'saveHistory', 'editSong', 'renameItem', 'saveSetlist', 'deleteSetlist', 'makePdf']);
@@ -600,7 +626,8 @@ async function net(fn, a, ms) {
   if (!window.APP_API) throw new AppErr('config.js 에 서버 주소(APP_API)가 없어요');
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
   try {
-    const r = await fetch(window.APP_API, { method: 'POST', body: JSON.stringify({ fn: fn, args: a }), signal: ctl.signal });
+    let r; try { r = await fetch(window.APP_API, { method: 'POST', body: JSON.stringify({ fn: fn, args: a }), signal: ctl.signal }); }
+    catch (e) { if (e && e.name === 'AbortError') throw e; const x = new Error(NOSERVER); x.noServer = true; throw x; }
     let j; try { j = await r.json(); } catch (e) { throw new AppErr('서버 응답을 읽을 수 없어요 (배포 설정을 확인하세요)'); }
     if (!j.ok) throw new AppErr(j.error);
     return j.data;
@@ -634,10 +661,11 @@ async function run0(fn, a, opt) {
     throw new Error('인터넷이 안 되고, 이 기기에 받아 둔 악보도 아직 없어요');
   }
   if (fn === 'login') {
-    if (online) { try { return await net(fn, a, 8000); } catch (e) { if (e instanceof AppErr) throw e; } }
+    let ne = null;
+    if (online) { try { return await net(fn, a, 8000); } catch (e) { if (e instanceof AppErr) throw e; ne = e; } }
     const r = ls.get('role', '');
     if (r && a[0] === ls.get('pw', '')) return { role: r, adminSet: true };
-    throw new Error(NEEDNET);
+    throw ne && ne.noServer ? ne : new Error(NEEDNET);
   }
   if (!online) throw new Error(NEEDNET);
   const d = await net(fn, a, LONG[fn] || 60000);
@@ -880,7 +908,7 @@ function renderHome() {
   } else if (items.length) groups = [{ name: '', list: items }];
   const row = (s, gname) => {
     const sub = subOf(s, grpKey, gname);
-    return `<div class="song" data-id="${s.id}" data-g="${esc(s.genre)}"><div><div class="nm">${esc(s.title)}</div>${sub ? `<div class="small">${esc(sub)}</div>` : ''}</div><span class="mk">${DL[s.id] ? '<i class="dli">저장됨</i>' : ''}${favs.includes(s.id) ? '★' : ''}</span></div>`;
+    return `<div class="song" data-id="${s.id}" data-g="${esc(s.genre)}"><div><div class="nm">${esc(s.title)}</div>${sub ? `<div class="small">${esc(sub)}</div>` : ''}</div><span class="mk">${DL[s.id] ? '<i class="dli">저장됨</i>' : ''}${favs.includes(s.id) ? '★' : ''}<button class="adm lsdel" data-del="${s.id}" aria-label="삭제">삭제</button></span></div>`;
   };
   $('#list').innerHTML = groups.map(g =>
     (g.name ? `<div class="gh">${esc(g.name)} · ${g.list.length}${g.latest ? ' · 최근 ' + fmt(g.latest) : ''}${(grpKey === 'stage' || grpKey === 'place') && g.name !== NOPERF && g.name !== NOSTAGE && g.name !== NOPLACE ? ` <button class="gpdf" data-n="${esc(g.name)}" style="float:right;padding:2px 10px;font-size:13px">한 번에 인쇄</button>` : ''}</div>` : '') +
@@ -909,7 +937,18 @@ $('#list').onclick = e => {
     items.sort(cmpFor(sortKey));
     return setPdf(b.dataset.n, items.map(x => x.id));
   }
+  const d = e.target.closest('.lsdel');
+  if (d) { e.stopPropagation(); return delFromList(d.dataset.del); }
   const s = e.target.closest('.song'); if (s) openSong(s.dataset.id, s.dataset.g, 'home'); };
+async function delFromList(id) {
+  const it = ALL.find(x => x.id === id); if (!it) return;
+  if (!confirm('"' + it.title + '" 곡을 삭제할까요?\n악보·음악·PDF·이력이 모두 드라이브 휴지통으로 가요.')) return;
+  try {
+    busy('삭제하는 중…'); await call('trashSong', id);
+    if (DL[id]) await deleteSongs([id]);
+    await loadLib(true); busy(false); toast('삭제했어요');
+  } catch (e) { busy(false); }
+}
 $('#slList').onclick = e => { const s = e.target.closest('.song'); if (s) openSetlist(s.dataset.id); };
 document.querySelectorAll('#home .tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('#home .tabs button').forEach(x => x.classList.toggle('on', x === b));
@@ -1180,7 +1219,7 @@ async function openSong(id, genre, fr) {
   from = fr || 'home'; curGenre = genre; editMode = false;
   drawOn = false; tool = 'move'; drawLayer = 'mine'; hist = []; $('#palette').hidden = true; $('#drawBtn').classList.remove('on');
   closeSheet(); recReset(); markRecent(id); setZoom(100); pgIdx = 0;
-  view('song'); $('#stitle').textContent = '불러오는 중…'; $('#viewer').scrollTo(0, 0);
+  view('song'); $('#stitle').textContent = '불러오는 중…'; $('#vtitle').textContent = (byId[id] || {}).title || ''; $('#viewer').scrollTo(0, 0);
   const loading = refreshSong(id);
   loading.catch(() => {});
   try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
@@ -1196,7 +1235,7 @@ async function refreshSong(id) {
   const d = await call('getSong', id || S.id);
   S = d; SH = d.marks || {};
   try { MY = JSON.parse(ls.get('marks:' + S.id, '{}')); } catch (e) { MY = {}; }
-  $('#stitle').textContent = S.title; setFavBtn(); syncEnhUp(); setHist(S.hist); renderDl(); updNb(); endArm = null; loadBm(); $('#eTitle').value = S.title; $('#eGenre').value = (byId[S.id] || {}).genre || '';
+  $('#stitle').textContent = S.title; $('#vtitle').textContent = S.title; setFavBtn(); syncEnhUp(); setHist(S.hist); renderDl(); updNb(); endArm = null; loadBm(); $('#eTitle').value = S.title; $('#eGenre').value = (byId[S.id] || {}).genre || '';
   renderPages(); renderPdfs(); renderMedia(); renderHist();
   if (role === 'admin') loadRecs();
 }
@@ -1221,6 +1260,7 @@ $('#back').onclick = () => {
   try { wake && wake.release(); } catch (e) {}
   if (from === 'sl' && curSl) openSetlist(curSl.id); else { view('home'); renderHome(); }
 };
+$('#listBtn').onclick = () => $('#back').click();
 $('#fav').onclick = () => {
   const i = favs.indexOf(S.id); if (i >= 0) favs.splice(i, 1); else favs.push(S.id);
   ls.set('favs', JSON.stringify(favs)); setFavBtn();
@@ -1243,7 +1283,12 @@ async function renderPages() {
   applyMode(true);
   const loadOne = async i => {
     const im = S.images[i];
-    try { cache[im.id] = cache[im.id] || await call('getImageData', im.id); } catch (e) { return; }
+    try { cache[im.id] = cache[im.id] || await run0('getImageData', [pw, im.id]); }
+    catch (e) {
+      if (my === tok) divs[i].innerHTML = '<div class="ph" style="line-height:1.7">악보를 불러오지 못했어요<br><small>' + esc((e && e.message) || '') + '</small><br><button class="pgRetry" style="margin-top:10px">다시 시도</button></div>';
+      if (my === tok) divs[i].querySelector('.pgRetry').onclick = ev => { ev.stopPropagation(); renderPages(); };
+      return;
+    }
     if (my !== tok) return;
     divs[i].innerHTML = `<img><canvas data-id="${im.id}"></canvas>`;
     const im0 = divs[i].querySelector('img');
@@ -1291,7 +1336,37 @@ function enhanceCanvas(c) {
 }
 function loadImg(src) { return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; }); }
 function showImg(img, id) { img.src = cache[id]; }
-const enhUp = () => ls.get('enhUp', '1') === '1';
+const enhUp = () => ls.get('enhUp', '0') === '1';     // 기본은 사진 그대로. 켜면 '밝고 깨끗하게'
+/** 그림자만 펴고 종이를 하얗게 (흑백 처리 아님, 색·글씨 그대로) */
+function cleanCanvas(c) {
+  const W = c.width, H = c.height, f = Math.min(1, 220 / Math.max(W, H)), w = Math.max(2, Math.round(W * f)), h = Math.max(2, Math.round(H * f));
+  const sm = document.createElement('canvas'); sm.width = w; sm.height = h;
+  const sx = sm.getContext('2d'); sx.imageSmoothingQuality = 'high'; sx.drawImage(c, 0, 0, w, h);
+  const d = sx.getImageData(0, 0, w, h), px = d.data;
+  const maxF = (a, r) => {                                  // 글씨를 지우고 종이 밝기만 남기는 최대값 필터(가로·세로)
+    const t = new Uint8Array(w * h), o = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let m = 0; for (let k = Math.max(0, x - r); k <= Math.min(w - 1, x + r); k++) m = Math.max(m, a[y * w + k]); t[y * w + x] = m; }
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let m = 0; for (let k = Math.max(0, y - r); k <= Math.min(h - 1, y + r); k++) m = Math.max(m, t[k * w + x]); o[y * w + x] = m; }
+    return o;
+  };
+  const boxF = (a, r) => {
+    const t = new Float32Array(w * h), o = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) { let s = 0, n = 0; for (let x = -r; x < w; x++) { const i = x + r, j = x - r - 1; if (i < w) { s += a[y * w + i]; n++; } if (j >= 0) { s -= a[y * w + j]; n--; } if (x >= 0) t[y * w + x] = s / n; } }
+    for (let x = 0; x < w; x++) { let s = 0, n = 0; for (let y = -r; y < h; y++) { const i = y + r, j = y - r - 1; if (i < h) { s += t[i * w + x]; n++; } if (j >= 0) { s -= t[j * w + x]; n--; } if (y >= 0) o[y * w + x] = s / n; } }
+    return o;
+  };
+  const ch = [0, 1, 2].map(k => { const a = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) a[i] = px[i * 4 + k]; return boxF(maxF(a, 4), 5); });
+  for (let i = 0; i < w * h; i++) { px[i * 4] = ch[0][i]; px[i * 4 + 1] = ch[1][i]; px[i * 4 + 2] = ch[2][i]; px[i * 4 + 3] = 255; }
+  sx.putImageData(d, 0, 0);
+  const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+  const bx = bg.getContext('2d'); bx.imageSmoothingQuality = 'high'; bx.drawImage(sm, 0, 0, W, H);
+  const cx = c.getContext('2d'), a = cx.getImageData(0, 0, W, H), b = bx.getImageData(0, 0, W, H).data, p = a.data;
+  const lut = new Uint8Array(256); for (let v = 0; v < 256; v++) lut[v] = Math.round(255 * Math.pow(v / 255, 1.2));
+  for (let i = 0; i < p.length; i += 4) for (let k = 0; k < 3; k++) {
+    const g = Math.max(60, b[i + k]); let v = p[i + k] / g * 250; v = v > 255 ? 255 : v; p[i + k] = lut[v | 0];
+  }
+  cx.putImageData(a, 0, 0);
+}
 function syncEnhUp() { document.querySelectorAll('.enhUpChk').forEach(c => c.checked = enhUp()); }
 document.addEventListener('change', e => { if (e.target.classList && e.target.classList.contains('enhUpChk')) { ls.set('enhUp', e.target.checked ? '1' : '0'); syncEnhUp(); } });
 
@@ -1539,7 +1614,7 @@ $('#eSave').onclick = async () => {
   try {
     const r = await call('editSong', S.id, t, g);
     await loadLib(); busy(false);
-    S.title = r.title; $('#stitle').textContent = r.title; curGenre = r.genre;
+    S.title = r.title; $('#stitle').textContent = r.title; $('#vtitle').textContent = r.title; curGenre = r.genre;
     if (DL[S.id]) { DL[S.id].title = r.title; DL[S.id].genre = r.genre; dlSave(); }
     toast('곡 정보를 바꿨어요');
   } catch (e) { busy(false); }
@@ -1622,7 +1697,7 @@ function resize(file, max = OUTMAX) {
       const w = Math.round(img.width * sc), h = Math.round(img.height * sc);
       const c = document.createElement('canvas'); c.width = w; c.height = h;
       const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
-      if (enhUp()) { scanFrom(img, img.width, img.height, { auto: true, enh: true }).then(r => { URL.revokeObjectURL(u); res(r); }, e => { URL.revokeObjectURL(u); rej(e); }); return; }
+      if (enhUp()) cleanCanvas(c);
       URL.revokeObjectURL(u); res({ b64: jpg64(c), th: thumbOf(c, w, h) });
     };
     img.onerror = () => { URL.revokeObjectURL(u); rej(new Error('읽을 수 없는 사진이에요')); };
@@ -1642,7 +1717,7 @@ async function* fromPdf(file) {
     const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
     const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
     await page.render({ canvasContext: x, viewport: vp }).promise;
-    if (enhUp()) enhanceCanvas(c);
+    if (enhUp()) cleanCanvas(c);
     yield { b64: jpg64(c), th: thumbOf(c, c.width, c.height) };
     page.cleanup();
   }
@@ -1817,13 +1892,13 @@ async function scanFrom(src, sw, sh, o) {
     out = document.createElement('canvas'); out.width = Math.max(1, Math.round(sw * f)); out.height = Math.max(1, Math.round(sh * f));
     const x = out.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, out.width, out.height); x.imageSmoothingQuality = 'high'; x.drawImage(src, 0, 0, out.width, out.height);
   }
-  if (o.enh) enhanceCanvas(out);
+  if (o.enh) cleanCanvas(out);
   return { b64: jpg64(out), th: thumbOf(out, out.width, out.height), cropped: cropped };
 }
 
 /* ---------- 스캔 카메라: 찍으면 바로 다음 쪽 ---------- */
 const CAM = { st: null, items: [], q: Promise.resolve(), cb: null, timer: 0, ic: null, shooting: false,
-  auto: ls.get('camAuto', '1') === '1', enh: ls.get('camEnh', '1') === '1' };
+  auto: false, enh: false };
 const camMsg = t => { $('#camMsg').textContent = t || ''; };
 function camCount() { const n = CAM.items.filter(x => x.b64).length; $('#camT').textContent = n ? n + '쪽 찍음' : ''; }
 function camStrip() {
@@ -1837,7 +1912,7 @@ $('#camStrip').onclick = e => {
 };
 async function openCam(cb) {
   CAM.cb = cb; CAM.items = []; CAM.q = Promise.resolve(); CAM.shooting = false;
-  $('#camAuto').classList.toggle('on', CAM.auto); $('#camEnh').classList.toggle('on', CAM.enh);
+  
   $('#camV').style.display = ''; $('#camShot').hidden = false; $('#camDone').hidden = false; $('#camFbRow').hidden = true;
   camStrip(); camMsg(''); $('#cam').hidden = false; document.body.style.overflow = 'hidden';
   try {
@@ -1868,7 +1943,7 @@ function camLive() {
 function camEnqueue(src, sw, sh) {
   const it = { wait: true }; CAM.items.push(it); camStrip();
   CAM.q = CAM.q.then(async () => {
-    try { Object.assign(it, await scanFrom(src, sw, sh, { auto: CAM.auto, enh: CAM.enh }), { wait: false }); }
+    try { Object.assign(it, await scanFrom(src, sw, sh, { auto: CAM.auto, enh: enhUp() }), { wait: false }); }
     catch (e) { const i = CAM.items.indexOf(it); if (i >= 0) CAM.items.splice(i, 1); toast('이 쪽을 처리하지 못했어요. 다시 찍어 주세요'); }
     camStrip();
   });
@@ -1886,8 +1961,7 @@ $('#camFile').onchange = async e => {
   const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
   try { const bm = await createImageBitmap(f); camEnqueue(bm, bm.width, bm.height); } catch (er) { toast('읽을 수 없는 사진이에요'); }
 };
-$('#camAuto').onclick = () => { CAM.auto = !CAM.auto; ls.set('camAuto', CAM.auto ? '1' : '0'); $('#camAuto').classList.toggle('on', CAM.auto); camLive(); };
-$('#camEnh').onclick = () => { CAM.enh = !CAM.enh; ls.set('camEnh', CAM.enh ? '1' : '0'); $('#camEnh').classList.toggle('on', CAM.enh); };
+
 async function camClose(done) {
   const n = CAM.items.filter(x => x.b64 || x.wait).length;
   if (!done && n && !confirm(`찍은 ${n}쪽을 올리지 않고 닫을까요?`)) return;
@@ -1904,7 +1978,7 @@ $('#camDone').onclick = $('#camDone2').onclick = () => camClose(true);
 function renderOrd() {
   $('#ordList').innerHTML = ordArr.map((id, i) =>
     `<div class="ord" data-i="${i}">${cache[id] ? `<img src="${cache[id]}">` : '<div class="ph2"></div>'}<b>${i + 1}쪽</b>` +
-    `<button data-a="up">▲</button><button data-a="dn">▼</button><button data-a="x">삭제</button></div>`).join('');
+    `<button data-a="up">▲</button><button data-a="dn">▼</button><button data-a="crop">자르기</button><button data-a="x">삭제</button></div>`).join('');
 }
 async function openOrder() {
   if (!S || !S.images.length) return toast('아직 악보가 없어요');
@@ -1920,11 +1994,88 @@ $('#ordList').onclick = async e => {
   const i = +b.closest('.ord').dataset.i, a = b.dataset.a;
   if (a === 'up' && i > 0) { [ordArr[i - 1], ordArr[i]] = [ordArr[i], ordArr[i - 1]]; renderOrd(); }
   else if (a === 'dn' && i < ordArr.length - 1) { [ordArr[i + 1], ordArr[i]] = [ordArr[i], ordArr[i + 1]]; renderOrd(); }
+  else if (a === 'crop') openCrop(i);
   else if (a === 'x') {
     if (!confirm(`${i + 1}쪽을 삭제할까요?`)) return;
     const id = ordArr[i];
     try { await call('trashItem', id); ordArr.splice(i, 1); S.images = S.images.filter(x => x.id !== id); renderOrd(); } catch (err) {}
   }
+};
+/* ---------- 악보 자르기 (손으로 영역 정하기) ---------- */
+let CR = { i: -1, r: { x0: 0, y0: 0, x1: 1, y1: 1 } }, crDrag = null;
+function crDraw() {
+  const r = CR.r, b = $('#cropBox');
+  b.style.left = r.x0 * 100 + '%'; b.style.top = r.y0 * 100 + '%';
+  b.style.width = (r.x1 - r.x0) * 100 + '%'; b.style.height = (r.y1 - r.y0) * 100 + '%';
+}
+async function openCrop(i) {
+  const id = ordArr[i]; CR.i = i; CR.r = { x0: 0, y0: 0, x1: 1, y1: 1 };
+  try {
+    if (!cache[id]) { busy('악보 불러오는 중…'); cache[id] = await call('getImageData', id); busy(false); }
+  } catch (e) { busy(false); return; }
+  CR.clean = null; $('#cropEnh').checked = enhUp();
+  const im = $('#cropImg'); im.onload = crDraw; im.src = cache[id];
+  $('#cropdlg').hidden = false; crDraw();
+  if ($('#cropEnh').checked) crEnh();
+}
+function crEnh() {
+  const id = ordArr[CR.i], im = $('#cropImg');
+  if (!$('#cropEnh').checked) { im.src = cache[id]; return; }
+  if (CR.clean && CR.cleanId === id) { im.src = CR.clean; return; }
+  busy('밝게 다듬는 중…');
+  const o = new Image();
+  o.onload = () => {
+    try { const c = document.createElement('canvas'); c.width = o.naturalWidth; c.height = o.naturalHeight; const x = c.getContext('2d'); x.drawImage(o, 0, 0); cleanCanvas(c); CR.clean = c.toDataURL('image/jpeg', JQ); CR.cleanId = id; im.src = CR.clean; }
+    catch (e) { toast('밝게 다듬지 못했어요'); }
+    busy(false);
+  };
+  o.src = cache[id];
+}
+$('#cropEnh').onchange = crEnh;
+$('#cropBox').addEventListener('pointerdown', e => {
+  const h = e.target.dataset.h || 'm', w = $('#cropWrap').getBoundingClientRect();
+  crDrag = { h: h, x: e.clientX, y: e.clientY, r: Object.assign({}, CR.r), w: w.width, ht: w.height };
+  try { e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {}
+  e.preventDefault();
+});
+$('#cropBox').addEventListener('pointermove', e => {
+  if (!crDrag) return;
+  const d = crDrag, dx = (e.clientX - d.x) / d.w, dy = (e.clientY - d.y) / d.ht, r = Object.assign({}, d.r), M = 0.06;
+  const cl = v => Math.max(0, Math.min(1, v));
+  if (d.h === 'm') {
+    const w = r.x1 - r.x0, h = r.y1 - r.y0;
+    r.x0 = Math.max(0, Math.min(1 - w, r.x0 + dx)); r.x1 = r.x0 + w;
+    r.y0 = Math.max(0, Math.min(1 - h, r.y0 + dy)); r.y1 = r.y0 + h;
+  } else {
+    if (d.h.includes('w')) r.x0 = Math.min(r.x1 - M, cl(r.x0 + dx));
+    if (d.h.includes('e')) r.x1 = Math.max(r.x0 + M, cl(r.x1 + dx));
+    if (d.h.includes('n')) r.y0 = Math.min(r.y1 - M, cl(r.y0 + dy));
+    if (d.h.includes('s')) r.y1 = Math.max(r.y0 + M, cl(r.y1 + dy));
+  }
+  CR.r = r; crDraw();
+});
+['pointerup', 'pointercancel'].forEach(t => $('#cropBox').addEventListener(t, () => { crDrag = null; }));
+$('#cropCancel').onclick = () => { $('#cropdlg').hidden = true; };
+$('#cropAll').onclick = () => { CR.r = { x0: 0, y0: 0, x1: 1, y1: 1 }; crDraw(); };
+$('#cropOk').onclick = async () => {
+  const i = CR.i, old = ordArr[i], r = CR.r, im = $('#cropImg');
+  if (!im.naturalWidth) return;
+  if (!$('#cropEnh').checked && r.x1 - r.x0 > 0.985 && r.y1 - r.y0 > 0.985) { $('#cropdlg').hidden = true; return toast('자를 부분을 정해 주세요'); }
+  if (!confirm($('#cropEnh').checked ? '이 쪽을 (잘라서) 밝게 저장할까요?\n이 쪽에 적어 둔 필기는 사라져요.' : '이 쪽을 잘라서 저장할까요?\n이 쪽에 적어 둔 필기는 사라져요.')) return;
+  busy('자르는 중…');
+  try {
+    const nw = im.naturalWidth, nh = im.naturalHeight;
+    const sx = Math.round(r.x0 * nw), sy = Math.round(r.y0 * nh), sw = Math.max(1, Math.round((r.x1 - r.x0) * nw)), sh = Math.max(1, Math.round((r.y1 - r.y0) * nh));
+    const c = document.createElement('canvas'); c.width = sw; c.height = sh;
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, sw, sh); x.drawImage(im, sx, sy, sw, sh, 0, 0, sw, sh);
+    const nm = `p_${Date.now()}_crop.jpg`, up = await call('uploadFile', S.id, nm, 'image/jpeg', jpg64(c));
+    ordArr[i] = up.id; cache[up.id] = c.toDataURL('image/jpeg', JQ);
+    await call('saveOrder', S.id, ordArr);
+    try { await call('trashItem', old); } catch (e) {}
+    S.images = ordArr.map(id => S.images.find(z => z.id === id) || { id: up.id, name: nm });
+    delete cache[old];
+    busy(false); $('#cropdlg').hidden = true; renderOrd(); toast('잘라서 저장했어요');
+  } catch (e) { fail(e); }
 };
 $('#ordCancel').onclick = async () => { $('#orddlg').hidden = true; await refreshSong(); };
 $('#ordOk').onclick = async () => {
