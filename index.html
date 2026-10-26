@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#00462a">
-<meta name="app-version" content="v010 2026-10-26">
+<meta name="app-version" content="v012 2026-10-26">
 <meta property="og:title" content="아르모니아 Harmonia Music Box">
 <meta property="og:description" content="합창단 악보 · 연습 · 필기">
 <meta name="format-detection" content="telephone=no">
@@ -68,8 +68,21 @@ select{font:inherit;width:100%;padding:10px;border:1px solid var(--line);border-
 .song > div{min-width:0}
 .perf input{margin-bottom:2px}
 .ord{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px;margin-bottom:6px}
-.ord img{width:64px;height:84px;object-fit:cover;object-position:top;border:1px solid var(--line);background:#eee;flex:none}
-.ord .ph2{width:64px;height:84px;background:#eee;flex:none}
+.ord img{width:170px;height:auto;max-height:230px;object-fit:contain;border:1px solid var(--line);background:#eee;flex:none;cursor:zoom-in}
+.ord .ph2{width:170px;height:230px;background:#eee;flex:none}
+.ord{flex-wrap:wrap}.ord .ob{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;min-width:150px;align-content:start}.ord .ob b,.ord .ob .dup{grid-column:1/-1}.ord .ob button{padding:11px 4px;font-size:14px}.ord .ob button[data-a="view"],.ord .ob button[data-a="x"]{grid-column:1/-1}
+.ord .dup{font-size:12.5px;color:var(--acc);font-weight:700;background:var(--accs);border-radius:8px;padding:3px 8px}
+#orddlg .box{max-width:980px;max-height:94vh}
+#ordList{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:8px}
+#ordList .ord{margin-bottom:0}
+#pvdlg{position:fixed;inset:0;z-index:40;background:#1c2420;display:flex;flex-direction:column}
+#pvdlg[hidden]{display:none}
+#pvBar{display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 10px 8px;color:#fff}
+#pvBar b{flex:1;text-align:center;font-size:15px}
+#pvBar button{padding:10px 16px}
+#pvStage{flex:1;min-height:0;overflow:auto;display:flex;align-items:flex-start;justify-content:center;touch-action:pan-x pan-y pinch-zoom}
+#pvImg{max-width:100%;max-height:100%;object-fit:contain;background:#fff;cursor:zoom-in}
+#pvStage.big #pvImg{max-width:none;max-height:none;width:200%;cursor:zoom-out}
 .ord b{flex:1}
 .ord button{padding:10px 12px}
 details summary{cursor:pointer}
@@ -258,14 +271,17 @@ body.admin .admb{display:block!important}
 #tooldlg{position:fixed;inset:0;z-index:25;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 16px 24px;overflow:auto}
 #tooldlg[hidden]{display:none}
 #tooldlg .bar{margin-bottom:6px}
+.mrow2{display:flex;align-items:center;gap:8px;margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 8px}.mrow2 b{font-size:14px;margin-right:auto;white-space:nowrap}.mrow2 input{width:64px;text-align:center;padding:10px 4px}.mrow2 button{padding:10px 14px}.mrow2 .btn{min-width:64px}
 .octrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 10px}.octrow span{font-weight:600;font-size:15px;text-align:center}.octrow button{padding:12px 16px}
-#piano{position:relative;height:230px;max-width:640px;margin:0 auto;display:flex;user-select:none;-webkit-user-select:none;touch-action:none;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid var(--line);background:#fff}
-#piano .w{flex:1;border-right:1px solid #cfd3c6;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:12px;font-weight:600;font-size:17px;color:var(--ink);touch-action:none}
+#piano{position:relative;height:238px;margin:0 auto;overflow-x:auto;overflow-y:hidden;user-select:none;-webkit-user-select:none;touch-action:pan-x;border-radius:0 0 12px 12px;border:1px solid var(--line);background:#fff;scrollbar-width:thin;overscroll-behavior-x:contain}
+.kin{position:relative;height:100%;display:flex}
+#piano .w,#kbKeys .w{flex:none;border-right:1px solid #cfd3c6;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;touch-action:pan-x}
+#piano .w{padding-bottom:12px;font-weight:600;font-size:17px;color:var(--ink)}
 #piano .w small{font-size:11px;color:var(--sub);font-weight:500}
-#piano .w:last-of-type{border-right:0}
 #piano .w.on{background:var(--accs)}
-#piano .b{position:absolute;top:0;height:60%;width:7.6%;background:#1c2420;border-radius:0 0 7px 7px;z-index:2;touch-action:none}
+#piano .b,#kbKeys .b{position:absolute;top:0;height:60%;background:#1c2420;border-radius:0 0 7px 7px;z-index:2;touch-action:pan-x}
 #piano .b.on{background:var(--acc)}
+#piano .w.mid,#kbKeys .w.mid{background:var(--accs);box-shadow:inset 0 -5px 0 var(--acc)}
 #kbd{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--bg);border-top:1px solid var(--line);display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 14px rgba(0,0,0,.12)}
 #kbd[hidden]{display:none}
 #kbTop{display:flex;align-items:center;gap:8px;height:46px;flex:none;padding:0 8px}
@@ -274,12 +290,12 @@ body.admin .admb{display:block!important}
 #kbParts button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 #kbNav{display:flex;gap:6px}
 #kbNav button,#kbX{padding:7px 12px;font-size:14px;border-radius:99px}
-#kbKeys{position:relative;flex:1;min-height:0;display:flex;margin:0 8px 6px;user-select:none;-webkit-user-select:none;touch-action:none;border:1px solid var(--line);border-radius:0 0 10px 10px;overflow:hidden;background:#fff}
-#kbKeys .w{flex:1;border-right:1px solid #cfd3c6;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6px;font-size:13px;font-weight:600;color:var(--ink);touch-action:none}
+#kbKeys{position:relative;flex:1;min-height:0;margin:0 8px 6px;user-select:none;-webkit-user-select:none;touch-action:pan-x;border:1px solid var(--line);border-radius:0 0 10px 10px;overflow-x:auto;overflow-y:hidden;background:#fff;scrollbar-width:none;overscroll-behavior-x:contain}
+#kbKeys::-webkit-scrollbar{display:none}
+#kbKeys .w{padding-bottom:6px;font-size:13px;font-weight:600;color:var(--ink)}
 #kbKeys .w small{font-size:10px;color:var(--sub);font-weight:500}
-#kbKeys .w:last-child{border-right:0}
 #kbKeys .w.on{background:var(--accs)}
-#kbKeys .b{position:absolute;top:0;height:60%;background:#1c2420;border-radius:0 0 5px 5px;z-index:2;touch-action:none}
+#kbKeys .b{border-radius:0 0 5px 5px}
 #kbKeys .b.on{background:var(--acc)}
 #kbTab{position:absolute;right:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:6;width:46px;height:46px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.12);box-shadow:0 1px 6px rgba(0,0,0,.25);opacity:.5;color:#33423a;touch-action:none}
 #kbTab:active{opacity:1}
@@ -326,7 +342,7 @@ body.admin .admb{display:block!important}
     <button class="btn pri adm" id="newSl">＋ 묶음 만들기</button>
     <div id="slList" style="margin-top:10px"></div>
   </div>
-  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v010 · 2026-10-26</p>
+  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v012 · 2026-10-26</p>
   <button class="fab adm" id="addBtn">＋ 새 곡</button>
 </div>
 
@@ -362,6 +378,7 @@ body.admin .admb{display:block!important}
       <button id="zReset">폭에 맞춤</button>
       <button id="zFit">한 쪽 전체 보기</button>
     </div>
+    <div class="mrow2"><b>♩ 메트로놈</b><button id="mMinus" aria-label="느리게">−</button><input id="mBpm2" type="number" min="30" max="240" value="80" inputmode="numeric" aria-label="빠르기"><button id="mPlus" aria-label="빠르게">＋</button><button id="mGo2" class="btn pri">시작</button></div>
     <div id="dlRow" style="margin:12px 2px 0;display:grid;gap:8px"></div>
     <div id="pdfs" style="margin-top:8px"></div>
 
@@ -409,6 +426,7 @@ body.admin .admb{display:block!important}
       <label class="chk">넘기는 방식<select id="vMode"><option value="page">책처럼 한 쪽씩</option><option value="scroll">이어서 스크롤</option></select></label>
       <label class="chk"><input type="checkbox" id="vSpread"> 가로 화면에서는 두 쪽씩 펼쳐 보기</label>
       <label class="chk"><input type="checkbox" id="vNight"> 야간 보기 (검은 바탕, 흰 악보)</label>
+      <div class="small" style="margin:2px 2px 4px">컴퓨터에서 쪽 넘기기: 화면 왼쪽·오른쪽 끝 누르기, 마우스 휠, 키보드 ← → (스페이스바)</div>
     </details>
 
     <details id="dHist">
@@ -543,16 +561,21 @@ body.admin .admb{display:block!important}
 <div id="orddlg" class="ov" hidden>
   <div class="box">
     <b>페이지 순서 · 자르기 · 삭제</b>
-    <div class="small">▲▼로 위치를 바꾸고 '삭제'로 지울 수 있어요. 끝나면 '순서 저장'을 누르세요. '자르기'는 누르면 바로 저장돼요.</div>
+    <div class="small">그림이나 "크게 보기"를 누르면 크게 볼 수 있어요. 같은 쪽이 두 번 있으면 "앞 쪽과 똑같아요"가 떠요. ▲▼로 위치를 바꾸고 '삭제'로 지울 수 있어요. 끝나면 '순서 저장'을 누르세요. '자르기'는 누르면 바로 저장돼요.</div>
     <div id="ordList"></div>
     <div class="row"><button id="ordCancel">취소</button><button id="ordOk" class="btn pri" style="flex:1">순서 저장</button></div>
   </div>
 </div>
+<!-- 악보 크게 보기 (순서 창에서 그림을 누르면) -->
+<div id="pvdlg" hidden>
+  <div id="pvBar"><button id="pvPrev">◀ 이전</button><b id="pvTitle"></b><button id="pvNext">다음 ▶</button><button id="pvX">닫기</button></div>
+  <div id="pvStage"><img id="pvImg" alt=""></div>
+</div>
 <!-- 음정 · 박자 확인 -->
 <div id="tooldlg" hidden>
   <div class="bar"><h2>음정 · 박자 확인</h2><button id="toolX">닫기</button></div>
-  <div class="small">건반을 눌러 피아노 소리로 시작음을 들어 보세요 (라 = 440Hz)</div>
-  <div class="octrow"><button id="octDn">◀ 낮게</button><span id="octLbl"></span><button id="octUp">높게 ▶</button></div>
+  <div class="small">건반을 눌러 피아노 소리로 시작음을 들어 보세요 (라 = 440Hz). 건반을 옆으로 밀면 위·아래 음이 부드럽게 이어져요.</div>
+  <div class="octrow"><button id="octDn">◀ 낮은 음</button><span id="octLbl">가운데 도(C4)는 아래가 초록색인 건반</span><button id="octUp">높은 음 ▶</button></div>
   <div id="piano"></div>
   <h3 style="margin:22px 0 0">박자</h3>
   <div class="mrow"><label class="small">빠르기<input id="mBpm" type="number" min="30" max="240" value="80" inputmode="numeric"></label>
@@ -1210,7 +1233,7 @@ $('#zFit').onclick = () => { fitPage(); $('#viewer').scrollTop = 0; closeSheet()
 /* 두 손가락 확대·축소 / 두 번 탭 / Ctrl+휠 */
 (function () {
   const vw = $('#viewer'), pg = $('#pages');
-  let g = null, t0 = null, lastTap = 0, lastPinch = 0;
+  let g = null, t0 = null, lastTap = 0, lastPinch = 0, lastWheel = 0;
   const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
   const mid = t => ({ x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 });
   vw.addEventListener('touchstart', e => {
@@ -1255,9 +1278,25 @@ $('#zFit').onclick = () => { fitPage(); $('#viewer').scrollTop = 0; closeSheet()
   });
   vw.addEventListener('touchcancel', e => { endPinch(e); t0 = null; });
   vw.addEventListener('wheel', e => {
-    if (!e.ctrlKey) return;
+    if (!e.ctrlKey) {                                   // 마우스 휠: 한눈에 보이는 상태면 쪽 넘기기
+      if (!isPaged() || !atFit() || (drawOn && tool !== 'move')) return;
+      e.preventDefault();
+      const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX, now = Date.now();
+      if (Math.abs(d) < 4 || now - lastWheel < 450) return;
+      lastWheel = now; turn(d > 0 ? 1 : -1); return;
+    }
     e.preventDefault(); zoomAt(e.clientX, e.clientY, zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15));
   }, { passive: false });
+  /* 마우스: 화면 왼쪽·오른쪽 끝을 누르면 이전·다음 쪽 (터치는 위 touchend에서 처리) */
+  let md = null;
+  vw.addEventListener('pointerdown', e => { md = e.pointerType === 'mouse' && e.button === 0 ? { x: e.clientX, y: e.clientY } : null; });
+  vw.addEventListener('pointerup', e => {
+    if (!md || e.pointerType !== 'mouse') return;
+    const m = md; md = null;
+    if (Math.hypot(e.clientX - m.x, e.clientY - m.y) > 6 || !isPaged() || !atFit() || (drawOn && tool !== 'move')) return;
+    const r = vw.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width;
+    if (fx < 0.2) turn(-1); else if (fx > 0.8) turn(1);
+  });
 })();
 
 async function openSong(id, genre, fr) {
@@ -1669,46 +1708,78 @@ function pianoVoice(c, dest, f, t) {
 let pOct = 4;                                               // 건반 시작 '도'의 옥타브 (4 = 가운데 도)
 const PIANO_W = [0, 2, 4, 5, 7, 9, 11, 12], PIANO_B = { 1: 0, 3: 1, 6: 3, 8: 4, 10: 5 }, SOL = ['도', '레', '미', '파', '솔', '라', '시', '도'], LET = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
 const keyHz = (i, oct) => 261.626 * Math.pow(2, (i + ((oct == null ? pOct : oct) - 4) * 12) / 12);
-function buildPiano() {
-  const pn = $('#piano'), w = 100 / 8;
-  pn.innerHTML = PIANO_W.map((n, j) => `<div class="w" data-n="${n}">${SOL[j]}<small>${LET[j]}${pOct + (j === 7 ? 1 : 0)}</small></div>`).join('') +
-    Object.keys(PIANO_B).map(n => `<div class="b" data-n="${n}" style="left:${(PIANO_B[n] + 1) * w - 3.8}%"></div>`).join('');
-  pn.dataset.oct = pOct;
-  $('#octLbl').textContent = pOct === 4 ? '가운데 도(C4)부터' : `${LET[0]}${pOct}부터`;
-  $('#octDn').disabled = pOct <= 2; $('#octUp').disabled = pOct >= 5;
+/* 건반 띠: C2~C7(흰 건반 36개)를 한 줄로 두고, 손가락으로 밀면 한 건반씩 부드럽게 움직여요 */
+const PK_N = 36, PK_BLACK = [0, 2, 5, 7, 9];                  // 흰 건반 수 / 검은 건반이 붙는 반음 자리(도·레·파·솔·라 뒤)
+const pkSemi = j => Math.floor(j / 7) * 12 + PIANO_W[j % 7];     // 흰 건반 j번(C2부터)의 반음 번호
+function buildStrip(box, kw, lab) {
+  const bw = kw * .62; let h = '<div class="kin" style="width:' + (PK_N * kw) + 'px">';
+  for (let j = 0; j < PK_N; j++) h += `<div class="w${j === 14 ? ' mid' : ''}" style="width:${kw}px" data-n="${pkSemi(j)}">${lab(j)}</div>`;
+  for (let j = 0; j < PK_N - 1; j++) if (PK_BLACK.includes(pkSemi(j) % 12)) h += `<div class="b" style="left:${(j + 1) * kw - bw / 2}px;width:${bw}px" data-n="${pkSemi(j) + 1}"></div>`;
+  box.innerHTML = h + '</div>'; box.dataset.oct = 2; box.dataset.kw = kw;
 }
+const pkLab = j => `${SOL[j % 7]}<small>${LET[j % 7]}${2 + Math.floor(j / 7)}</small>`;
+const PK_KW = () => window.innerWidth >= 700 ? 62 : 46;
+function pkEdge() { const b = $('#piano'); $('#octDn').disabled = b.scrollLeft <= 2; $('#octUp').disabled = b.scrollLeft >= b.scrollWidth - b.clientWidth - 2; }
+function buildPiano() {
+  const pn = $('#piano'), kw = PK_KW(), keep = pn.dataset.kw ? pn.scrollLeft / +pn.dataset.kw : 12;   // 처음엔 '라3' 근처에서 시작(가운데 도가 보이게)
+  if (+pn.dataset.kw !== kw || !pn.firstChild) buildStrip(pn, kw, pkLab);
+  pn.scrollLeft = keep * kw; pkEdge();
+}
+$('#piano').addEventListener('scroll', pkEdge);
+$('#piano').addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); e.currentTarget.scrollLeft += e.deltaY; } }, { passive: false });
+const pkMove = (box, d) => box.scrollBy({ left: d * +box.dataset.kw * 3, behavior: 'smooth' });
+$('#octDn').onclick = () => pkMove($('#piano'), -1);
+$('#octUp').onclick = () => pkMove($('#piano'), 1);
+window.addEventListener('resize', () => { if (!$('#tooldlg').hidden) buildPiano(); });
 const PV = {};                                              // 누르고 있는 건반 (손가락별)
+/** 건반 누르기. 손가락(터치)은 밀려는 건지 누르는 건지 알 수 없어서 0.08초 뒤에 소리를 내요 (밀면 소리 없이 건반만 움직임) */
 function keyDown(e) {
   const k = e.target.closest('[data-n]'); if (!k || PV[e.pointerId]) return;
-  e.preventDefault(); const c = AC(); k.classList.add('on');
-  const box = e.currentTarget;
-  PV[e.pointerId] = { k: k, v: pianoVoice(c, c.destination, keyHz(+k.dataset.n, +box.dataset.oct), c.currentTime) };
-  try { box.setPointerCapture(e.pointerId); } catch (x) {}
+  const c = AC(), box = e.currentTarget, id = e.pointerId, p = { k: k, v: null, t: null };
+  p.go = () => { if (PV[id] !== p || p.v) return; k.classList.add('on'); p.v = pianoVoice(c, c.destination, keyHz(+k.dataset.n, +box.dataset.oct), c.currentTime); };
+  PV[id] = p;
+  if (e.pointerType === 'touch') p.t = setTimeout(p.go, 80); else p.go();
 }
-function keyUp(e) { const p = PV[e.pointerId]; if (!p) return; p.k.classList.remove('on'); p.v.stop(); delete PV[e.pointerId]; }
+function keyUp(e) {
+  const p = PV[e.pointerId]; if (!p) return; clearTimeout(p.t); delete PV[e.pointerId];
+  if (!p.v) {
+    if (e.type === 'pointerup') { PV[e.pointerId] = p; p.go(); delete PV[e.pointerId]; setTimeout(() => { p.v && p.v.stop(); p.k.classList.remove('on'); }, 260); }   // 톡 누른 경우
+    return;
+  }
+  p.k.classList.remove('on'); p.v.stop();
+}
 $('#piano').addEventListener('pointerdown', keyDown);
 ['pointerup', 'pointercancel'].forEach(t => $('#piano').addEventListener(t, keyUp));
 $('#kbKeys').addEventListener('pointerdown', keyDown);
 ['pointerup', 'pointercancel'].forEach(t => $('#kbKeys').addEventListener(t, keyUp));
-$('#octDn').onclick = () => { if (pOct > 2) { pOct--; buildPiano(); } };
-$('#octUp').onclick = () => { if (pOct < 5) { pOct++; buildPiano(); } };
-$('#toneBtn').onclick = () => { buildPiano(); $('#tooldlg').hidden = false; AC(); };
+$('#toneBtn').onclick = () => { $('#tooldlg').hidden = false; buildPiano(); AC(); };
 $('#toolX').onclick = () => { stopMetro(); Object.keys(PV).forEach(id => keyUp({ pointerId: id })); $('#tooldlg').hidden = true; };
 let metro = null, beat = 0;
-function stopMetro() { if (metro) { clearInterval(metro); metro = null; } $('#mGo').textContent = '박자 시작'; $('#mGo').classList.add('pri'); }
+function stopMetro() {
+  if (metro) { clearInterval(metro); metro = null; }
+  $('#mGo').textContent = '박자 시작'; $('#mGo').classList.add('pri'); $('#mGo2').textContent = '시작'; $('#mGo2').classList.add('pri');
+}
 function click(acc) {
   const c = AC(), o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
   o.frequency.value = acc ? 1500 : 1000; g.gain.setValueAtTime(.5, t); g.gain.exponentialRampToValueAtTime(.001, t + .06);
   o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + .07);
 }
-$('#mGo').onclick = () => {
-  if (metro) return stopMetro();
-  const bpm = Math.max(30, Math.min(240, +$('#mBpm').value || 80)), n = +$('#mBeat').value; beat = 0;
-  $('#mBpm').value = bpm; AC();
+const bpmOf = el => Math.max(30, Math.min(240, +el.value || 80));
+function startMetro(bpm) {
+  const n = +$('#mBeat').value; beat = 0; AC();
+  $('#mBpm').value = $('#mBpm2').value = bpm;
   const tick = () => { click(beat % n === 0); beat++; };
   tick(); metro = setInterval(tick, 60000 / bpm);
-  $('#mGo').textContent = '박자 멈춤'; $('#mGo').classList.remove('pri');
-};
+  $('#mGo').textContent = '박자 멈춤'; $('#mGo').classList.remove('pri'); $('#mGo2').textContent = '멈춤'; $('#mGo2').classList.remove('pri');
+}
+const toggleMetro = el => { if (metro) return stopMetro(); startMetro(bpmOf(el)); };
+$('#mGo').onclick = () => toggleMetro($('#mBpm'));
+$('#mGo2').onclick = () => toggleMetro($('#mBpm2'));
+const bpmChanged = el => { const v = bpmOf(el); $('#mBpm').value = $('#mBpm2').value = v; if (metro) { stopMetro(); startMetro(v); } };
+$('#mBpm').onchange = () => bpmChanged($('#mBpm')); $('#mBpm2').onchange = () => bpmChanged($('#mBpm2'));
+$('#mBeat').onchange = () => { if (metro) { stopMetro(); startMetro(bpmOf($('#mBpm'))); } };
+$('#mMinus').onclick = () => { $('#mBpm2').value = bpmOf($('#mBpm2')) - 5; bpmChanged($('#mBpm2')); };
+$('#mPlus').onclick = () => { $('#mBpm2').value = bpmOf($('#mBpm2')) + 5; bpmChanged($('#mBpm2')); };
 
 /* 곡 이름 · 장르 바꾸기 (관리자) */
 $('#eSave').onclick = async () => {
@@ -2107,10 +2178,28 @@ $('#camDone').onclick = $('#camDone2').onclick = () => camClose(true);
 
 /* ---------- 페이지 순서 바꾸기 / 삭제 ---------- */
 function renderOrd() {
-  $('#ordList').innerHTML = ordArr.map((id, i) =>
-    `<div class="ord" data-i="${i}">${cache[id] ? `<img src="${cache[id]}">` : '<div class="ph2"></div>'}<b>${i + 1}쪽</b>` +
-    `<button data-a="up">▲</button><button data-a="dn">▼</button><button data-a="crop">자르기</button><button data-a="x">삭제</button></div>`).join('');
+  $('#ordList').innerHTML = ordArr.map((id, i) => {
+    const dup = i > 0 && cache[id] && cache[id] === cache[ordArr[i - 1]];       // 앞 쪽과 파일 내용이 똑같으면 알려 줌
+    return `<div class="ord" data-i="${i}">${cache[id] ? `<img src="${cache[id]}" data-a="view" alt="${i + 1}쪽">` : '<div class="ph2"></div>'}` +
+      `<div class="ob"><b>${i + 1}쪽</b>${dup ? '<span class="dup">앞 쪽과 똑같아요</span>' : ''}` +
+      `<button data-a="view">크게 보기</button><button data-a="up">▲ 위로</button><button data-a="dn">▼ 아래로</button><button data-a="crop">자르기</button><button data-a="x">삭제</button></div></div>`;
+  }).join('');
 }
+let pvI = 0;
+function showPv(i) {
+  if (i < 0 || i >= ordArr.length) return; pvI = i;
+  const id = ordArr[i], im = $('#pvImg'); $('#pvStage').classList.remove('big'); $('#pvStage').scrollTo(0, 0);
+  $('#pvTitle').textContent = `${i + 1} / ${ordArr.length}쪽`; im.src = cache[id] || '';
+  $('#pvPrev').disabled = i <= 0; $('#pvNext').disabled = i >= ordArr.length - 1;
+  if (!cache[id]) call('getImageData', id).then(d => { cache[id] = d; if (pvI === i && !$('#pvdlg').hidden) im.src = d; }).catch(() => {});
+}
+$('#pvPrev').onclick = () => showPv(pvI - 1); $('#pvNext').onclick = () => showPv(pvI + 1);
+$('#pvX').onclick = () => { $('#pvdlg').hidden = true; };
+$('#pvImg').onclick = () => $('#pvStage').classList.toggle('big');
+document.addEventListener('keydown', e => {
+  if ($('#pvdlg').hidden) return;
+  if (e.key === 'ArrowRight') showPv(pvI + 1); else if (e.key === 'ArrowLeft') showPv(pvI - 1); else if (e.key === 'Escape') $('#pvdlg').hidden = true;
+});
 async function openOrder() {
   if (!S || !S.images.length) return toast('아직 악보가 없어요');
   ordArr = S.images.map(i => i.id); renderOrd(); $('#orddlg').hidden = false;
@@ -2121,9 +2210,10 @@ async function openOrder() {
 }
 $('#editBtn').onclick = () => { closeSheet(); openOrder(); };
 $('#ordList').onclick = async e => {
-  const b = e.target.closest('button'); if (!b) return;
+  const b = e.target.closest('[data-a]'); if (!b) return;
   const i = +b.closest('.ord').dataset.i, a = b.dataset.a;
-  if (a === 'up' && i > 0) { [ordArr[i - 1], ordArr[i]] = [ordArr[i], ordArr[i - 1]]; renderOrd(); }
+  if (a === 'view') { $('#pvdlg').hidden = false; showPv(i); }
+  else if (a === 'up' && i > 0) { [ordArr[i - 1], ordArr[i]] = [ordArr[i], ordArr[i - 1]]; renderOrd(); }
   else if (a === 'dn' && i < ordArr.length - 1) { [ordArr[i + 1], ordArr[i]] = [ordArr[i], ordArr[i + 1]]; renderOrd(); }
   else if (a === 'crop') openCrop(i);
   else if (a === 'x') {
@@ -2569,32 +2659,33 @@ $('#spOk').onclick = async () => {
 start();
 
 /* ---------- 악보 아래 건반: 손잡이(오른쪽 아래 건반 버튼)로 올리고 내림 · 여성 3부 음역 버튼 ---------- */
-const KB_START = { '소프라노': 7, '메조소프라노': 5, '알토': 3 };   // C3부터 센 흰 건반 번호 → 도4 · 라3 · 파3에서 시작
-const KB_WH = [0, 2, 4, 5, 7, 9, 11], KB_N = 22;                    // C3 ~ C6 (세 옥타브)
+const KB_START = { '소프라노': 14, '메조소프라노': 12, '알토': 10 };   // C2부터 센 흰 건반 번호 → 도4 · 라3 · 파3부터 보임
 let kbOn = false, kStart = KB_START[PARTS.includes(myPart) ? myPart : '소프라노'];
-const kbSemi = i => Math.floor(i / 7) * 12 + KB_WH[i % 7];
-function buildKbd() {
-  const box = $('#kbKeys'), W = box.clientWidth || window.innerWidth - 16;
-  const n = Math.max(7, Math.min(KB_N, Math.floor(W / 46)));         // 화면 폭에 맞춰 건반 수가 정해져요
-  kStart = Math.max(0, Math.min(KB_N - n, kStart));
-  const ws = Array.from({ length: n }, (_, j) => kStart + j), w = 100 / n, bw = w * .62;
-  box.dataset.oct = 3;
-  box.innerHTML = ws.map(i => `<div class="w" data-n="${kbSemi(i)}">${i % 7 === 0 ? '도<small>' + (3 + i / 7) + '</small>' : ''}</div>`).join('') +
-    ws.map((i, j) => [0, 2, 5, 7, 9].includes(kbSemi(i) % 12) && j < n - 1 ? `<div class="b" data-n="${kbSemi(i) + 1}" style="left:${(j + 1) * w - bw / 2}%;width:${bw}%"></div>` : '').join('');
-  document.querySelectorAll('#kbParts button').forEach(b => b.classList.toggle('on', KB_START[b.dataset.p] === kStart));
-  $('#kbDn').disabled = kStart <= 0; $('#kbUp').disabled = kStart >= KB_N - n;
+const KB_KW = () => window.innerWidth >= 700 ? 46 : 42;
+function kbMark() {
+  const b = $('#kbKeys'), kw = KB_KW(), f = Math.round(b.scrollLeft / kw);
+  document.querySelectorAll('#kbParts button').forEach(x => x.classList.toggle('on', KB_START[x.dataset.p] === f));
+  $('#kbDn').disabled = b.scrollLeft <= 2; $('#kbUp').disabled = b.scrollLeft >= b.scrollWidth - b.clientWidth - 2;
 }
-document.querySelectorAll('#kbParts button').forEach(b => b.onclick = () => { kStart = KB_START[b.dataset.p]; buildKbd(); });
-$('#kbDn').onclick = () => { kStart -= 7; buildKbd(); };
-$('#kbUp').onclick = () => { kStart += 7; buildKbd(); };
+function buildKbd(goStart) {
+  const box = $('#kbKeys'), kw = KB_KW();
+  if (+box.dataset.kw !== kw || !box.firstChild) buildStrip(box, kw, j => j % 7 === 0 ? '도<small>' + (2 + j / 7) + '</small>' : '');
+  if (goStart) box.scrollLeft = kStart * kw;
+  kbMark();
+}
+$('#kbKeys').addEventListener('scroll', kbMark);
+$('#kbKeys').addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); e.currentTarget.scrollLeft += e.deltaY; } }, { passive: false });
+document.querySelectorAll('#kbParts button').forEach(b => b.onclick = () => { $('#kbKeys').scrollTo({ left: KB_START[b.dataset.p] * KB_KW(), behavior: 'smooth' }); });
+$('#kbDn').onclick = () => pkMove($('#kbKeys'), -1);
+$('#kbUp').onclick = () => pkMove($('#kbKeys'), 1);
 function kbH() { return kbOn ? 46 + Math.round(Math.max(100, Math.min(170, window.innerHeight * .26))) : 0; }
 function updKbd() {
-  const song = !$('#song').hidden, on = kbOn && song, h = on ? kbH() : 0;
+  const song = !$('#song').hidden, on = kbOn && song, h = on ? kbH() : 0, wasOn = !$('#kbd').hidden;
   if (!song && kbOn) kbOn = false;
   $('#kbd').hidden = !on; $('#kbTab').hidden = !song || on;
   $('#kbd').style.height = h + 'px'; $('#viewer').style.bottom = h + 'px';
   document.documentElement.style.setProperty('--kbh', h + 'px');
-  if (on) buildKbd(); else Object.keys(PV).forEach(id => { if (PV[id] && PV[id].k.closest('#kbd')) keyUp({ pointerId: id }); });
+  if (on) buildKbd(!wasOn); else Object.keys(PV).forEach(id => { if (PV[id] && PV[id].k.closest('#kbd')) keyUp({ pointerId: id }); });
   if (song) setTimeout(centerPages, 0);                              // 악보 크기는 그대로, 위치만 다시 맞춤
 }
 let kbDrag = null;
