@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#00462a">
-<meta name="app-version" content="v012 2026-10-26">
+<meta name="app-version" content="v014 2026-10-27">
 <meta property="og:title" content="아르모니아 Harmonia Music Box">
 <meta property="og:description" content="합창단 악보 · 연습 · 필기">
 <meta name="format-detection" content="telephone=no">
@@ -41,6 +41,8 @@ input:not([type=file]):not([type=checkbox]){font:inherit;width:100%;padding:11px
 .tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .scroller{overflow:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
 .pg{position:relative;margin-bottom:8px;background:#fff}
+.pg::before{content:var(--wm,"");position:absolute;left:0;right:0;bottom:3px;text-align:center;font-size:11px;line-height:1.2;color:rgba(0,0,0,.38);pointer-events:none;white-space:nowrap;overflow:hidden}
+body.night .pg::before{color:rgba(255,255,255,.45)}
 .pg img{width:100%;display:block}
 .ph{padding:60px 0;text-align:center;color:var(--sub)}
 .del{position:absolute;top:8px;right:8px;background:#c0392b;color:#fff;border:0}
@@ -285,6 +287,7 @@ body.admin .admb{display:block!important}
 #kbd{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--bg);border-top:1px solid var(--line);display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 14px rgba(0,0,0,.12)}
 #kbd[hidden]{display:none}
 #kbTop{display:flex;align-items:center;gap:8px;height:46px;flex:none;padding:0 8px}
+#kbMetro{display:flex;align-items:center;gap:8px;height:42px;flex:none;padding:0 10px}#kbMetro b{font-size:20px;color:var(--acc);flex:none}#kbMetro button{padding:6px 12px;font-size:15px;border-radius:99px}#kbMetro input{width:64px;text-align:center;padding:6px 4px;font-size:15px}#kbMetro select{flex:none;width:84px;padding:6px 4px;font-size:15px}#kbMetro #kGo{margin-left:auto;min-width:76px}
 #kbParts{display:flex;gap:6px;flex:1;min-width:0}
 #kbParts button{flex:1;padding:7px 4px;font-size:14px;border-radius:99px;white-space:nowrap}
 #kbParts button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
@@ -342,7 +345,7 @@ body.admin .admb{display:block!important}
     <button class="btn pri adm" id="newSl">＋ 묶음 만들기</button>
     <div id="slList" style="margin-top:10px"></div>
   </div>
-  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v012 · 2026-10-26</p>
+  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v014 · 2026-10-27</p>
   <button class="fab adm" id="addBtn">＋ 새 곡</button>
 </div>
 
@@ -358,7 +361,7 @@ body.admin .admb{display:block!important}
   <div id="viewer"><div id="pages"></div></div>
   <div id="pgInd"></div>
   <button id="kbTab" aria-label="건반 올리기"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M9 5v14M15 5v14"/><path d="M7.2 5v7M12 5v7M16.8 5v7" stroke-width="3"/></svg></button>
-  <div id="kbd" hidden><div id="kbTop"><div id="kbParts"><button data-p="소프라노">소프라노</button><button data-p="메조소프라노">메조</button><button data-p="알토">알토</button></div><div id="kbNav"><button id="kbDn" aria-label="낮은 음">◀</button><button id="kbUp" aria-label="높은 음">▶</button></div><button id="kbX" aria-label="건반 내리기">▼</button></div><div id="kbKeys"></div></div>
+  <div id="kbd" hidden><div id="kbTop"><div id="kbParts"><button data-p="소프라노">소프라노</button><button data-p="메조소프라노">메조</button><button data-p="알토">알토</button></div><div id="kbNav"><button id="kbDn" aria-label="낮은 음">◀</button><button id="kbUp" aria-label="높은 음">▶</button></div><button id="kbX" aria-label="건반 내리기">▼</button></div><div id="kbMetro"><b>♩</b><button id="kMinus" aria-label="느리게">−</button><input id="kBpm" type="number" min="30" max="240" value="80" inputmode="numeric" aria-label="빠르기"><button id="kPlus" aria-label="빠르게">＋</button><select id="kBeat" aria-label="박자"><option value="2">2박</option><option value="3">3박</option><option value="4" selected>4박</option><option value="5">5박</option><option value="6">6박</option><option value="7">7박</option><option value="8">8박</option><option value="9">9박</option></select><button id="kGo" class="btn pri">시작</button></div><div id="kbKeys"></div></div>
   <div id="vtitle"></div>
   <div id="fbar"><button id="listBtn" aria-label="목록으로"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.6" cy="6" r=".9" fill="currentColor"/><circle cx="4.6" cy="12" r=".9" fill="currentColor"/><circle cx="4.6" cy="18" r=".9" fill="currentColor"/></svg></button><button id="drawBtn" aria-label="필기"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/></svg></button><button id="menuBtn" aria-label="메뉴"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
 </div>
@@ -378,7 +381,7 @@ body.admin .admb{display:block!important}
       <button id="zReset">폭에 맞춤</button>
       <button id="zFit">한 쪽 전체 보기</button>
     </div>
-    <div class="mrow2"><b>♩ 메트로놈</b><button id="mMinus" aria-label="느리게">−</button><input id="mBpm2" type="number" min="30" max="240" value="80" inputmode="numeric" aria-label="빠르기"><button id="mPlus" aria-label="빠르게">＋</button><button id="mGo2" class="btn pri">시작</button></div>
+    <div id="mOn" class="mrow2" hidden><b>♩ 메트로놈이 켜져 있어요</b><button id="mOff" class="btn pri" style="margin-left:auto">끄기</button></div>
     <div id="dlRow" style="margin:12px 2px 0;display:grid;gap:8px"></div>
     <div id="pdfs" style="margin-top:8px"></div>
 
@@ -405,8 +408,8 @@ body.admin .admb{display:block!important}
       <div id="recDone" hidden>
         <audio id="recAudio" controls></audio>
         <div class="row"><a id="recDl" class="btn" download="연습녹음.m4a">저장</a><button id="recDiscard">🗑 버리기</button></div>
-        <div class="row"><input id="recName" placeholder="내 이름 (제출용)"><button id="recSubmit" class="btn pri">지휘자에게 제출</button></div>
-        <div class="small" style="margin-top:6px">제출하지 않으면 내 폰에만 있고, 이 화면을 나가면 사라집니다.</div>
+        <div class="row" hidden><!-- 제출 기능은 지금 숨김(서버 기능은 남겨 둠). 다시 쓰려면 hidden 제거 + REC_SUBMIT=true --><input id="recName" placeholder="내 이름 (제출용)"><button id="recSubmit" class="btn pri">지휘자에게 제출</button></div>
+        <div class="small" style="margin-top:6px">저장하지 않으면 이 화면을 나갈 때 사라져요.</div>
       </div>
     </details>
 
@@ -445,8 +448,8 @@ body.admin .admb{display:block!important}
       <h3>곡 이름 · 장르 바꾸기</h3>
       <div class="row"><input id="eTitle" placeholder="곡명"></div>
       <div class="row"><input id="eGenre" list="gl" placeholder="장르"><button id="eSave" class="btn pri">저장</button></div>
-      <h3>제출된 녹음</h3>
-      <div id="recs"></div>
+      <div hidden><h3>제출된 녹음</h3>
+      <div id="recs"></div></div>
       <p style="margin-top:20px"><button id="delSong" class="small">이 곡 삭제</button></p>
     </details>
   </div>
@@ -579,7 +582,7 @@ body.admin .admb{display:block!important}
   <div id="piano"></div>
   <h3 style="margin:22px 0 0">박자</h3>
   <div class="mrow"><label class="small">빠르기<input id="mBpm" type="number" min="30" max="240" value="80" inputmode="numeric"></label>
-    <label class="small">박자<select id="mBeat"><option value="2">2박</option><option value="3">3박</option><option value="4" selected>4박</option><option value="6">6박</option></select></label>
+    <label class="small">박자<select id="mBeat"><option value="2">2박</option><option value="3">3박</option><option value="4" selected>4박</option><option value="5">5박</option><option value="6">6박</option><option value="7">7박</option><option value="8">8박</option><option value="9">9박</option></select></label>
     <button id="mGo" class="btn pri">박자 시작</button></div>
 </div>
 <!-- 악보 자르기 -->
@@ -1302,7 +1305,7 @@ $('#zFit').onclick = () => { fitPage(); $('#viewer').scrollTop = 0; closeSheet()
 async function openSong(id, genre, fr) {
   from = fr || 'home'; curGenre = genre; editMode = false;
   drawOn = false; tool = 'move'; drawLayer = 'mine'; hist = []; $('#palette').hidden = true; $('#drawBtn').classList.remove('on');
-  closeSheet(); recReset(); markRecent(id); setZoom(100); pgIdx = 0;
+  closeSheet(); recReset(); markRecent(id); setZoom(100); pgIdx = 0; metroLoad(id);
   view('song'); $('#stitle').textContent = '불러오는 중…'; $('#vtitle').textContent = (byId[id] || {}).title || ''; $('#viewer').scrollTo(0, 0);
   const loading = refreshSong(id);
   loading.catch(() => {});
@@ -1754,32 +1757,44 @@ $('#kbKeys').addEventListener('pointerdown', keyDown);
 ['pointerup', 'pointercancel'].forEach(t => $('#kbKeys').addEventListener(t, keyUp));
 $('#toneBtn').onclick = () => { $('#tooldlg').hidden = false; buildPiano(); AC(); };
 $('#toolX').onclick = () => { stopMetro(); Object.keys(PV).forEach(id => keyUp({ pointerId: id })); $('#tooldlg').hidden = true; };
-let metro = null, beat = 0;
-function stopMetro() {
-  if (metro) { clearInterval(metro); metro = null; }
-  $('#mGo').textContent = '박자 시작'; $('#mGo').classList.add('pri'); $('#mGo2').textContent = '시작'; $('#mGo2').classList.add('pri');
+let metro = null, beat = 0, mSong = '';
+const bpmOf = el => Math.max(30, Math.min(240, +el.value || 80));
+const beatOf = () => Math.max(2, Math.min(9, +$('#mBeat').value || 4));
+function metroUI() {
+  const on = !!metro;
+  $('#mGo').textContent = on ? '박자 멈춤' : '박자 시작'; $('#mGo').classList.toggle('pri', !on);
+  $('#kGo').textContent = on ? '멈춤' : '시작'; $('#kGo').classList.toggle('pri', !on);
+  $('#mOn').hidden = !on;
 }
-function click(acc) {
-  const c = AC(), o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
+function stopMetro() { if (metro) { clearInterval(metro); metro = null; } metroUI(); }
+function click(acc, at) {
+  const c = AC(), o = c.createOscillator(), g = c.createGain(), t = at || c.currentTime;
   o.frequency.value = acc ? 1500 : 1000; g.gain.setValueAtTime(.5, t); g.gain.exponentialRampToValueAtTime(.001, t + .06);
   o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + .07);
 }
-const bpmOf = el => Math.max(30, Math.min(240, +el.value || 80));
 function startMetro(bpm) {
-  const n = +$('#mBeat').value; beat = 0; AC();
-  $('#mBpm').value = $('#mBpm2').value = bpm;
-  const tick = () => { click(beat % n === 0); beat++; };
-  tick(); metro = setInterval(tick, 60000 / bpm);
-  $('#mGo').textContent = '박자 멈춤'; $('#mGo').classList.remove('pri'); $('#mGo2').textContent = '멈춤'; $('#mGo2').classList.remove('pri');
+  beat = 0; metroSet(bpm, beatOf());
+  // 오디오 시계 예약: 앞으로 0.15초 안의 박을 소리 전용 시계에 정확한 시각으로 미리 맡긴다
+  const c = AC(), gap = 60 / bpm; let next = c.currentTime + .05;
+  const sched = () => { while (next < c.currentTime + .15) { click(beat % beatOf() === 0, next); beat++; next += gap; } };
+  sched(); metro = setInterval(sched, 25); metroUI();
 }
-const toggleMetro = el => { if (metro) return stopMetro(); startMetro(bpmOf(el)); };
-$('#mGo').onclick = () => toggleMetro($('#mBpm'));
-$('#mGo2').onclick = () => toggleMetro($('#mBpm2'));
-const bpmChanged = el => { const v = bpmOf(el); $('#mBpm').value = $('#mBpm2').value = v; if (metro) { stopMetro(); startMetro(v); } };
-$('#mBpm').onchange = () => bpmChanged($('#mBpm')); $('#mBpm2').onchange = () => bpmChanged($('#mBpm2'));
-$('#mBeat').onchange = () => { if (metro) { stopMetro(); startMetro(bpmOf($('#mBpm'))); } };
-$('#mMinus').onclick = () => { $('#mBpm2').value = bpmOf($('#mBpm2')) - 5; bpmChanged($('#mBpm2')); };
-$('#mPlus').onclick = () => { $('#mBpm2').value = bpmOf($('#mBpm2')) + 5; bpmChanged($('#mBpm2')); };
+/* 속도·박자: 두 곳(음정 창, 건반창)이 같은 값을 쓰고, 곡마다 이 기기에 기억해요 */
+function metroSet(bpm, n) { $('#mBpm').value = $('#kBpm').value = bpm; $('#mBeat').value = $('#kBeat').value = n; }
+function metroSave() { const v = JSON.stringify({ b: bpmOf($('#mBpm')), n: beatOf() }); ls.set('metro:def', v); if (mSong) ls.set('metro:' + mSong, v); }
+function metroLoad(id) {
+  mSong = id || '';
+  let v = null; try { v = JSON.parse(ls.get('metro:' + id, '') || ls.get('metro:def', '') || 'null'); } catch (e) {}
+  metroSet(v && v.b >= 30 && v.b <= 240 ? v.b : 80, v && v.n >= 2 && v.n <= 9 ? v.n : 4);
+}
+const toggleMetro = () => { if (metro) return stopMetro(); startMetro(bpmOf($('#mBpm'))); };
+$('#mGo').onclick = toggleMetro; $('#kGo').onclick = toggleMetro; $('#mOff').onclick = stopMetro;
+const bpmChanged = v => { v = Math.max(30, Math.min(240, v || 80)); metroSet(v, beatOf()); metroSave(); if (metro) { stopMetro(); startMetro(v); } };
+$('#mBpm').onchange = () => bpmChanged(+$('#mBpm').value); $('#kBpm').onchange = () => bpmChanged(+$('#kBpm').value);
+const beatChanged = el => { metroSet(bpmOf($('#mBpm')), +el.value || 4); metroSave(); };
+$('#mBeat').onchange = () => beatChanged($('#mBeat')); $('#kBeat').onchange = () => beatChanged($('#kBeat'));
+$('#kMinus').onclick = () => bpmChanged(bpmOf($('#kBpm')) - 5);
+$('#kPlus').onclick = () => bpmChanged(bpmOf($('#kBpm')) + 5);
 
 /* 곡 이름 · 장르 바꾸기 (관리자) */
 $('#eSave').onclick = async () => {
@@ -2453,7 +2468,9 @@ $('#recSubmit').onclick = async () => {
     busy(false); toast('지휘자에게 제출했어요'); $('#recDone').hidden = true; recBlob = null;
   } catch (e) { busy(false); }
 };
+const REC_SUBMIT = false;   // 녹음 제출·제출 목록은 앱에서 숨김 (서버 Code.gs 기능은 그대로 둠)
 async function loadRecs() {
+  if (!REC_SUBMIT) return;
   try {
     const rs = await call('getRecordings', S.id);
     $('#recs').innerHTML = rs.map(r => `<div class="item"><div class="t"><span>${esc(r.name)}</span>
@@ -2509,6 +2526,16 @@ $('#nOk').onclick = async () => {
 /* ---------- 인쇄용 PDF: 이 기기에서 바로 만들어요 (서버 대기 없음, 받아 둔 곡은 인터넷 없이도) ---------- */
 LIBS.jspdf = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 let PD = { title: '', ids: [], blob: null, url: '', name: '' };
+/* 합창단 이름 워터마크: 보기(화면 아래)와 인쇄·PDF(종이 아래)에 같은 문구. config.js의 APP_WATERMARK로 바꾸고, 빈 글자("")면 끔 */
+const WM_TEXT = typeof window.APP_WATERMARK === 'string' ? window.APP_WATERMARK.trim() : '아르모니아 합창단 · 연습용 · 무단 복제·배포 금지';
+document.documentElement.style.setProperty('--wm', JSON.stringify(WM_TEXT));
+function wmImage() {
+  if (!WM_TEXT) return null;
+  const c = document.createElement('canvas'), x = c.getContext('2d'), f = '600 30px "Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+  x.font = f; const w = Math.ceil(x.measureText(WM_TEXT).width) + 16; c.width = w; c.height = 44; x.font = f;
+  x.fillStyle = '#8a8f87'; x.textBaseline = 'middle'; x.textAlign = 'center'; x.fillText(WM_TEXT, w / 2, 24);
+  return { url: c.toDataURL('image/png'), r: w / 44 };
+}
 function setPdf(title, ids) {
   if (!ids.length) return toast('곡이 없어요');
   if (ids.length > 20) return toast('한 번에 20곡까지 가능해요');
@@ -2523,7 +2550,7 @@ async function buildPdf(ids, bw, prog) {
   const J = window.jspdf.jsPDF, pages = [];
   for (const id of ids) { const d = await call('getSong', id); d.images.forEach(im => pages.push(im.id)); }
   if (!pages.length) throw new Error('악보 사진이 없어요');
-  let doc = null, n = 0;
+  let doc = null, n = 0; const wm = wmImage();
   for (const pid of pages) {
     prog(++n, pages.length);
     const data = cache[pid] || (cache[pid] = await call('getImageData', pid));
@@ -2532,6 +2559,7 @@ async function buildPdf(ids, bw, prog) {
     const land = w > h * 1.15, PW = land ? 297 : 210, PH = land ? 210 : 297, M = 7, sc = Math.min((PW - 2 * M) / w, (PH - 2 * M) / h), dw = w * sc, dh = h * sc;
     if (!doc) doc = new J({ unit: 'mm', format: 'a4', orientation: land ? 'l' : 'p', compress: true }); else doc.addPage('a4', land ? 'l' : 'p');
     doc.addImage(use, /^data:image\/png/.test(use) ? 'PNG' : 'JPEG', (PW - dw) / 2, (PH - dh) / 2, dw, dh, undefined, 'FAST');
+    if (wm) { const wh = 3.4, ww = Math.min(PW - 20, wh * wm.r); doc.addImage(wm.url, 'PNG', (PW - ww) / 2, PH - 6.2, ww, ww / wm.r, undefined, 'FAST'); }
     await new Promise(r => setTimeout(r, 0));
   }
   return { blob: doc.output('blob'), pages: n };
@@ -2678,7 +2706,7 @@ $('#kbKeys').addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(
 document.querySelectorAll('#kbParts button').forEach(b => b.onclick = () => { $('#kbKeys').scrollTo({ left: KB_START[b.dataset.p] * KB_KW(), behavior: 'smooth' }); });
 $('#kbDn').onclick = () => pkMove($('#kbKeys'), -1);
 $('#kbUp').onclick = () => pkMove($('#kbKeys'), 1);
-function kbH() { return kbOn ? 46 + Math.round(Math.max(100, Math.min(170, window.innerHeight * .26))) : 0; }
+function kbH() { return kbOn ? 88 + Math.round(Math.max(100, Math.min(170, window.innerHeight * .26))) : 0; }
 function updKbd() {
   const song = !$('#song').hidden, on = kbOn && song, h = on ? kbH() : 0, wasOn = !$('#kbd').hidden;
   if (!song && kbOn) kbOn = false;
