@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#00462a">
-<meta name="app-version" content="v014 2026-10-27">
+<meta name="app-version" content="v015 2026-10-31">
 <meta property="og:title" content="아르모니아 Harmonia Music Box">
 <meta property="og:description" content="합창단 악보 · 연습 · 필기">
 <meta name="format-detection" content="telephone=no">
@@ -56,6 +56,10 @@ h3{margin:18px 4px 8px;font-size:15px}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:9}
 .ov .box{background:var(--bg);width:100%;max-width:560px;border-radius:18px 18px 0 0;padding:18px;display:grid;gap:10px;max-height:90vh;overflow:auto}
 #busy{align-items:center;color:#fff;font-size:17px;text-align:center}
+#busyBar{height:6px;background:rgba(255,255,255,.3);border-radius:3px;margin:14px auto 0;width:240px;overflow:hidden}#busyBar i{display:block;height:100%;width:0;background:#fff;transition:width .25s}
+#busyHint{font-size:13px;opacity:.85;margin-top:10px}
+.fl{display:flex;gap:8px;align-items:center;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}.fl span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fl button{padding:4px 12px}
+.okc{color:var(--acc);font-weight:700}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:10}
 .pg canvas{position:absolute;left:0;top:0;pointer-events:none}
 .pg .del{z-index:2}
@@ -345,7 +349,7 @@ body.admin .admb{display:block!important}
     <button class="btn pri adm" id="newSl">＋ 묶음 만들기</button>
     <div id="slList" style="margin-top:10px"></div>
   </div>
-  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v014 · 2026-10-27</p>
+  <p class="small" id="verTxt" style="text-align:center;margin:28px 0 96px;opacity:.55">아르모니아 · 빌드 v015 · 2026-10-31</p>
   <button class="fab adm" id="addBtn">＋ 새 곡</button>
 </div>
 
@@ -551,6 +555,7 @@ body.admin .admb{display:block!important}
     <label class="btn">파일 선택 (PDF·ZIP·사진)<input type="file" id="bkFile" accept="image/*,application/pdf,.pdf,.zip,application/zip,application/x-zip-compressed" multiple hidden></label>
     <label class="small" style="display:block;margin:8px 0"><input type="checkbox" class="enhUpChk"> 밝고 깨끗하게: 그림자만 펴고 종이를 하얗게 (흑백으로 바꾸지는 않아요)</label>
     <div class="small" id="bkInfo">선택한 파일 0개</div>
+    <div id="bkList"></div>
     <div class="row"><button id="bkCancel">취소</button><button id="bkGo" class="btn pri" style="flex:1">쪽 불러오기</button></div>
   </div>
 </div>
@@ -631,7 +636,7 @@ body.admin .admb{display:block!important}
   </div>
 </div>
 <div id="offline" hidden>오프라인 · 이 기기에 저장한 악보만 열 수 있어요</div>
-<div id="busy" class="ov" hidden><div id="busyMsg">처리 중…</div></div>
+<div id="busy" class="ov" hidden><div><div id="busyMsg">처리 중…</div><div id="busyBar" hidden><i></i></div><div id="busyHint" hidden>화면을 켜 둔 채, 다른 앱으로 가지 말고 기다려 주세요</div></div></div>
 <div id="toast"></div>
 
 <script>
@@ -744,8 +749,29 @@ window.addEventListener('fresh', async ev => {          // 뒤에서 받아 온 
     else if (d.fn === 'getSong' && S && S.id === d.args[1] && !$('#song').hidden) await mergeSong();
   } catch (e) {}
 });
-function toast(m) { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2800); }
-function busy(m) { $('#busy').hidden = !m; if (m) $('#busyMsg').textContent = m; }
+let toastT = null;
+function toast(m, ms) { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => t.style.display = 'none', ms || 2800); }
+/** 처리 중 화면. pct: 없음=메시지만 · null=안내 문구 포함 · 0~1=진행 막대 포함. 보이는 동안 화면이 저절로 꺼지지 않게 함 */
+let bwake = null;
+async function bkeep(on) {
+  try { if (on) { if (!bwake && navigator.wakeLock) { bwake = await navigator.wakeLock.request('screen'); bwake.addEventListener('release', () => { bwake = null; }); } } else if (bwake) { const w = bwake; bwake = null; await w.release(); } } catch (e) { bwake = null; }
+}
+function busy(m, pct) {
+  $('#busy').hidden = !m; if (m) $('#busyMsg').textContent = m;
+  const bar = $('#busyBar'), has = !!m && pct !== undefined;
+  bar.hidden = !(has && pct !== null); $('#busyHint').hidden = !has;
+  if (!bar.hidden) bar.firstChild.style.width = Math.round(Math.max(0, Math.min(1, pct)) * 100) + '%';
+  bkeep(!!m);
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !$('#busy').hidden) bkeep(true); });
+window.addEventListener('beforeunload', e => { if (!$('#busy').hidden) { e.preventDefault(); e.returnValue = ''; } });
+/** 한 번에 n개까지만 동시에 실행 */
+function limiter(n) {
+  let a = 0; const q = [];
+  const next = () => { if (a >= n || !q.length) return; a++; const t = q.shift(); t.f().then(t.ok, t.no).then(() => { a--; next(); }); };
+  return f => new Promise((ok, no) => { q.push({ f: f, ok: ok, no: no }); next(); });
+}
+const fmtSize = b => b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : Math.max(1, Math.round(b / 1024)) + 'KB';
 function view(v) { ['gate','home','song','sl'].forEach(x => $('#' + x).hidden = x !== v); window.scrollTo(0, 0); try { updKbd(); } catch (e) {} }
 
 async function share(title, url) {
@@ -1156,7 +1182,7 @@ const closeSheet = () => $('#sheet').classList.remove('open');
 $('#menuBtn').onclick = openSheet; $('#sheetBk').onclick = closeSheet; $('#sheetX').onclick = closeSheet;
 $('#zReset').onclick = () => { setZoom(100); $('#viewer').scrollLeft = 0; closeSheet(); };
 /* ---- 보기 방식: 책 넘기듯(한 쪽씩 / 가로 두 쪽) 또는 이어서 스크롤 ---- */
-let pgIdx = 0, fitZ = 100, indT = null;
+let pgIdx = 0, fitZ = 100, indT = null, pagePrio = null;
 const isPaged = () => ls.get('mode', 'page') === 'page';
 const wantSpread = () => { const v = $('#viewer'); return isPaged() && ls.get('spread', '1') === '1' && v.clientWidth > v.clientHeight * 1.25; };
 const stepN = () => wantSpread() ? 2 : 1;
@@ -1178,6 +1204,7 @@ function showPage(i, quiet) {
   const s0 = Math.floor(pgIdx / st) * st;
   ds.forEach((d, k) => d.classList.toggle('off', !(k >= s0 && k < s0 + st)));
   fitPage(); const v = $('#viewer'); v.scrollTop = 0; v.scrollLeft = 0;
+  try { pagePrio && pagePrio(s0); } catch (e) {}
   if (!quiet) flashInd();
 }
 function applyMode(quiet) {
@@ -1370,15 +1397,20 @@ async function renderPages() {
   applyMode(true);
   const loadOne = async i => {
     const im = S.images[i];
-    try { cache[im.id] = cache[im.id] || await run0('getImageData', [pw, im.id]); }
-    catch (e) {
+    let e0 = null;
+    for (let t = 0; t < 2 && !cache[im.id] && my === tok; t++) {              // 한 번 실패하면 잠깐 뒤 자동으로 다시
+      try { cache[im.id] = await run0('getImageData', [pw, im.id]); }
+      catch (e) { e0 = e; if (navigator.onLine === false) break; await new Promise(r => setTimeout(r, 700)); }
+    }
+    if (!cache[im.id]) {
+      const e = e0 || new Error('');
       if (my === tok) divs[i].innerHTML = '<div class="ph" style="line-height:1.7">악보를 불러오지 못했어요<br><small>' + esc((e && e.message) || '') + '</small><br><button class="pgRetry" style="margin-top:10px">다시 시도</button></div>';
       if (my === tok) divs[i].querySelector('.pgRetry').onclick = ev => { ev.stopPropagation(); renderPages(); };
       return;
     }
     if (my !== tok) return;
     divs[i].innerHTML = `<img><canvas data-id="${im.id}"></canvas>`;
-    const im0 = divs[i].querySelector('img');
+    const im0 = divs[i].querySelector('img'); im0.decoding = 'async';
     im0.addEventListener('load', () => { setTimeout(centerPages, 0);
       if (isPaged()) { if (!divs[i].classList.contains('off')) fitPage(); }
       else if (i === 0) { const v = $('#viewer'); if (v.clientWidth > v.clientHeight * 1.1) fitPage(); }
@@ -1386,9 +1418,12 @@ async function renderPages() {
     showImg(im0, im.id);
     setupCanvas(divs[i], im.id);
   };
-  let nx = 0;
-  const worker = async () => { while (my === tok) { const i = nx++; if (i >= S.images.length) return; await loadOne(i); } };
-  await Promise.all([worker(), worker(), worker()]);
+  const order = S.images.map((_, i) => i);                                     // 지금 보는 쪽과 다음 쪽부터 먼저 받음
+  const want = i0 => { const st = stepN(); for (let k = i0 + 2 * st - 1; k >= i0; k--) { const p = order.indexOf(k); if (p > 0) { order.splice(p, 1); order.unshift(k); } } };
+  pagePrio = i0 => { if (my === tok) want(i0); };
+  want(Math.floor(pgIdx / stepN()) * stepN());
+  const worker = async () => { while (my === tok) { const i = order.shift(); if (i === undefined) return; await loadOne(i); } };
+  await Promise.all([worker(), worker(), worker(), worker()]);
 }
 function renderPdfs() {
   $('#pdfs').innerHTML = S.pdfs.map(p => `<div class="item"><div class="t"><span>${esc(p.name)}</span>
@@ -1945,30 +1980,35 @@ async function* pagesFrom(files) {
   }
 }
 async function uploadPages(songId, files, scans) {
-  const stamp = Date.now(); let n = 0, err = null; const act = new Set();
-  const send = async it => {
-    n++; const nm = `p_${stamp}_${String(n).padStart(3, '0')}.jpg`; busy(`악보 올리는 중… ${n}쪽`);
-    const pr = call('uploadFile', songId, nm, 'image/jpeg', it.b64).catch(e => { err = err || e; }).then(() => act.delete(pr));
-    act.add(pr);
-    if (act.size >= 3) await Promise.race(act);
+  const stamp = Date.now(); let n = 0, ok = 0, err = null; const lim = limiter(4), jobs = [];
+  const send = it => {
+    n++; const nm = `p_${stamp}_${String(n).padStart(3, '0')}.jpg`; if (!err) busy(`악보 올리는 중… ${ok}/${n}쪽`, null);
+    jobs.push(lim(async () => {
+      if (err) return;
+      try { await run0('uploadFile', [pw, songId, nm, 'image/jpeg', it.b64]); ok++; if (!err) busy(`악보 올리는 중… ${ok}/${n}쪽`, null); }
+      catch (e) { err = err || e; }
+    }));
+    return jobs.length > 6 ? jobs[jobs.length - 6] : null;      // 읽는 속도가 올리는 속도를 너무 앞서지 않게
   };
-  for (const it of (scans || [])) { await send(it); if (err) break; }
-  if (!err) for await (const it of pagesFrom(sortFiles(files || []))) { await send(it); if (err) break; }
-  await Promise.all([...act]);
-  if (err) throw err;
+  try {
+    for (const it of (scans || [])) { const w = send(it); if (w) await w; if (err) break; }
+    if (!err) for await (const it of pagesFrom(sortFiles(files || []))) { const w = send(it); if (w) await w; if (err) break; }
+  } catch (e) { err = err || e; }
+  await Promise.allSettled(jobs);
+  if (err) throw new Error(`${ok}쪽까지 올라갔어요. 곡을 열어 확인해 주세요. (${(err && err.message) || err})`);
   if (!n) throw new Error('올릴 수 있는 악보 이미지가 없어요');
   return n;
 }
 async function addFiles(inp) {
   const files = [...inp.files]; inp.value = ''; if (!files.length) return;
   closeSheet();
-  try { busy('파일 읽는 중…'); const n = await uploadPages(S.id, files); busy(false); await refreshSong(); toast(`${n}쪽을 추가했어요`); }
-  catch (e) { fail(e); }
+  try { busy('파일 읽는 중…', null); const n = await uploadPages(S.id, files); busy(false); await refreshSong(); toast(`${n}쪽을 추가했어요`); }
+  catch (e) { try { await refreshSong(); } catch (e2) {} fail(e); }
 }
 $('#galIn').onchange = e => addFiles(e.target);
 $('#camBtn').onclick = () => { closeSheet(); openCam(async items => {
-  try { busy('악보 올리는 중…'); const n = await uploadPages(S.id, [], items); busy(false); await refreshSong(); toast(`${n}쪽을 추가했어요`); }
-  catch (e) { fail(e); }
+  try { busy('악보 올리는 중…', null); const n = await uploadPages(S.id, [], items); busy(false); await refreshSong(); toast(`${n}쪽을 추가했어요`); }
+  catch (e) { try { await refreshSong(); } catch (e2) {} fail(e); }
 }); };
 
 /* ---------- 스캔: 악보 영역 찾기 → 반듯하게 펴기 → 배경 하얗게 ---------- */
@@ -2489,7 +2529,7 @@ $('#recs').onclick = async e => {
 $('#addBtn').onclick = () => { syncEnhUp();
   newFiles = []; newScans = []; autoTitle = ''; $('#nTitle').value = '';
   ['nStart', 'nStage', 'nPDate', 'nPlace'].forEach(i => $('#' + i).value = '');
-  $('#nInfo').textContent = '선택한 파일 0개 (나중에 추가해도 됩니다)';
+  nInfo();
   const g = lib.genres.find(x => x.id === filter); $('#nGenre').value = g ? g.name : ''; $('#dlg').hidden = false;
 };
 $('#nCancel').onclick = () => $('#dlg').hidden = true;
@@ -2504,12 +2544,15 @@ function pick(inp) {
 $('#nGal').onchange = e => pick(e.target);
 function nInfo() {
   const parts = []; if (newFiles.length) parts.push(`파일 ${newFiles.length}개`); if (newScans.length) parts.push(`촬영 ${newScans.length}쪽`);
-  $('#nInfo').textContent = parts.length ? '선택: ' + parts.join(' · ') : '선택한 파일 0개 (나중에 추가해도 됩니다)';
+  const nm = sortFiles(newFiles).map(f => f.name), el = $('#nInfo');
+  el.classList.toggle('okc', parts.length > 0);
+  el.textContent = parts.length ? '✓ 선택됨: ' + parts.join(' · ') + (nm.length ? ' — ' + nm.slice(0, 3).join(', ') + (nm.length > 3 ? ' …' : '') : '') : '선택한 파일 0개 (나중에 추가해도 됩니다)';
 }
 $('#nCamBtn').onclick = () => openCam(items => { newScans = newScans.concat(items); nInfo(); });
 $('#nOk').onclick = async () => {
   const genre = $('#nGenre').value.trim(), title = $('#nTitle').value.trim();
   if (!title) return toast('곡명을 입력하세요');
+  if (ALL.some(a => a.genre === (genre || '미분류') && a.title === title) && !confirm(`'${title}' 곡이 이미 있어요.\n그 곡에 악보를 이어서 추가할까요?\n(같은 악보를 또 올리면 쪽이 두 번 보여요)`)) return;
   $('#dlg').hidden = true; busy('곡 만드는 중…');
   try {
     const id = await call('createSong', genre, title);
@@ -2520,7 +2563,7 @@ $('#nOk').onclick = async () => {
     if (newFiles.length || newScans.length) await uploadPages(id, newFiles, newScans);
     await loadLib(); busy(false);
     await openSong(id, byId[id] ? byId[id].genre : '', 'home');
-  } catch (e) { fail(e); }
+  } catch (e) { try { await loadLib(); } catch (e2) {} fail(e); }
 };
 
 /* ---------- 인쇄용 PDF: 이 기기에서 바로 만들어요 (서버 대기 없음, 받아 둔 곡은 인터넷 없이도) ---------- */
@@ -2584,22 +2627,26 @@ $('#prShare').onclick = async () => {
 $('#prX').onclick = () => $('#pdfres').hidden = true;
 
 /* ---------- 여러 곡 한꺼번에 (나누기) ---------- */
-let spItems = [], spStarts = new Set(), spNames = {}, spGenres = {}, spSkip = new Set(), spFiles = [], spSize = 1;
+let spItems = [], spStarts = new Set(), spNames = {}, spGenres = {}, spSkip = new Set(), spFiles = [], spSize = 1, spProg = {};
 const SP_SIZES = [110, 160, 240];
 const cleanName = n => String(n || '').replace(/[\\/:*?"<>|]/g, ' ').trim();
-$('#bulkBtn').onclick = () => { $('#dlg').hidden = true; syncEnhUp(); spFiles = []; $('#bkGenre').value = ''; $('#bkInfo').textContent = '선택한 파일 0개'; $('#bulkdlg').hidden = false; };
+$('#bulkBtn').onclick = () => { $('#dlg').hidden = true; syncEnhUp(); spFiles = []; $('#bkGenre').value = ''; bkRender(); $('#bulkdlg').hidden = false; };
 $('#bkCancel').onclick = () => $('#bulkdlg').hidden = true;
-$('#bkFile').onchange = e => {
-  spFiles = spFiles.concat([...e.target.files]); e.target.value = '';
-  const s = sortFiles(spFiles);
-  $('#bkInfo').textContent = `선택한 파일 ${spFiles.length}개: ` + s.map(f => f.name).slice(0, 3).join(', ') + (spFiles.length > 3 ? ' …' : '');
-};
+function bkRender() {
+  const s = sortFiles(spFiles), n = spFiles.length;
+  $('#bkList').innerHTML = s.map(f => `<div class="fl"><span class="okc">✓ ${esc(f.name)}</span><small>${fmtSize(f.size || 0)}</small><button data-r="${spFiles.indexOf(f)}">빼기</button></div>`).join('');
+  $('#bkInfo').textContent = n ? `${n}개 선택됨 · 맞으면 아래 '쪽 불러오기'를 누르세요` : '선택한 파일 0개';
+  $('#bkInfo').classList.toggle('okc', n > 0);
+  $('#bkGo').textContent = n ? `쪽 불러오기 (${n}개)` : '쪽 불러오기'; $('#bkGo').disabled = !n;
+}
+$('#bkList').onclick = e => { const b = e.target.closest('[data-r]'); if (!b) return; spFiles.splice(+b.dataset.r, 1); bkRender(); };
+$('#bkFile').onchange = e => { spFiles = spFiles.concat([...e.target.files]); e.target.value = ''; bkRender(); };
 $('#bkGo').onclick = async () => {
   if (!spFiles.length) return toast('파일을 먼저 선택하세요');
-  $('#bulkdlg').hidden = true; busy('파일 읽는 중…');
+  $('#bulkdlg').hidden = true; busy('파일 읽는 중…', null);
   try {
-    spItems = [];
-    for await (const it of pagesFrom(sortFiles(spFiles))) { spItems.push(it); busy(`쪽 읽는 중… ${spItems.length}쪽`); }
+    spItems = []; spProg = {};
+    for await (const it of pagesFrom(sortFiles(spFiles))) { spItems.push(it); busy(`쪽 읽는 중… ${spItems.length}쪽`, null); }
     if (!spItems.length) throw new Error('올릴 수 있는 악보 이미지가 없어요');
     spStarts = new Set([0]); spNames = {}; spGenres = {}; spSkip = new Set();
     const defName = spFiles.length === 1 ? baseOf(spFiles[0].name).replace(/_+/g, ' ').trim() : '';
@@ -2616,6 +2663,12 @@ $('#bkGo').onclick = async () => {
     busy(false); $('#splitdlg').hidden = false; renderSplit();
   } catch (e) { fail(e); }
 };
+function spStat(st, k) {
+  const pr = spProg[st];
+  if (pr && pr.id) return ` · <b class="okc">${pr.done.size ? '✓ 올라간 쪽 ' + pr.done.size + '장' : '곡 만듦'}</b>`;
+  const t = cleanName(spNames[st]) || `곡 ${k + 1}`, g = cleanName(spGenres[st] !== undefined ? spGenres[st] : $('#bkGenre').value.trim()) || '미분류';
+  return ALL.some(a => a.genre === g && a.title === t) ? ' · <b>이미 있는 곡 (건너뜀)</b>' : '';
+}
 function renderSplit() {
   const starts = [...spStarts].sort((a, b) => a - b), N = spItems.length, g0 = $('#bkGenre').value.trim();
   const songOf = new Array(N);
@@ -2625,7 +2678,7 @@ function renderSplit() {
     const en = k + 1 < starts.length ? starts[k + 1] : N; let cnt = 0;
     for (let i = st; i < en; i++) if (!spSkip.has(i)) cnt++;
     return `<div class="srow" data-s="${st}"><div class="row" style="margin:0"><b style="width:28px;padding-top:10px">${k + 1}</b><input data-k="t" placeholder="곡 ${k + 1} 이름" value="${esc(spNames[st] || '')}"></div>` +
-      `<input data-k="g" list="gl" placeholder="장르" value="${esc(spGenres[st] !== undefined ? spGenres[st] : g0)}"><div class="small">${st + 1}~${en}쪽 · 올릴 쪽 ${cnt}장</div></div>`;
+      `<input data-k="g" list="gl" placeholder="장르" value="${esc(spGenres[st] !== undefined ? spGenres[st] : g0)}"><div class="small">${st + 1}~${en}쪽 · 올릴 쪽 ${cnt}장${spStat(st, k)}</div></div>`;
   }).join('');
   $('#spThumbs').innerHTML = spItems.map((it, i) =>
     `<div class="th ${spStarts.has(i) ? 'st' : ''} ${spSkip.has(i) ? 'sk' : ''}" data-i="${i}"><img src="${it.th}">` +
@@ -2646,13 +2699,13 @@ $('#spThumbs').onclick = e => {
   renderSplit();
 };
 $('#spSize').onclick = () => { spSize = (spSize + 1) % SP_SIZES.length; renderSplit(); };
-$('#spCancel').onclick = () => { if (confirm('나누기를 취소할까요? 불러온 쪽이 사라집니다.')) { spItems = []; $('#splitdlg').hidden = true; } };
+$('#spCancel').onclick = () => { if (confirm('나누기를 취소할까요? 불러온 쪽이 사라집니다.')) { spItems = []; spProg = {}; $('#splitdlg').hidden = true; loadLib().catch(() => {}); } };
 $('#spOk').onclick = async () => {
   const starts = [...spStarts].sort((a, b) => a - b), N = spItems.length, g0 = $('#bkGenre').value.trim();
-  const songs = starts.map((st, k) => {
+  let songs = starts.map((st, k) => {
     const en = k + 1 < starts.length ? starts[k + 1] : N, pages = [];
     for (let i = st; i < en; i++) if (!spSkip.has(i)) pages.push(i);
-    return { title: cleanName(spNames[st]) || `곡 ${k + 1}`, genre: cleanName(spGenres[st] !== undefined ? spGenres[st] : g0) || '미분류', pages: pages };
+    return { st: st, title: cleanName(spNames[st]) || `곡 ${k + 1}`, genre: cleanName(spGenres[st] !== undefined ? spGenres[st] : g0) || '미분류', pages: pages };
   }).filter(x => x.pages.length);
   if (!songs.length) return toast('올릴 쪽이 없어요');
   const seen = {};
@@ -2661,27 +2714,43 @@ $('#spOk').onclick = async () => {
     if (seen[k]) return toast(`곡 이름이 겹쳐요: ${x.title} (같은 장르에서는 다른 이름으로 해 주세요)`);
     seen[k] = 1;
   }
-  const exist = songs.filter(x => ALL.some(a => a.genre === x.genre && a.title === x.title));
-  if (exist.length && !confirm(`이미 있는 곡이 ${exist.length}개 있어요 (${exist.slice(0, 3).map(x => x.title).join(', ')}${exist.length > 3 ? ' …' : ''}).\n그 곡에는 쪽이 이어서 추가돼요. 계속할까요?`)) return;
-  let k = 0;
+  const exist = songs.filter(x => !(spProg[x.st] && spProg[x.st].id) && ALL.some(a => a.genre === x.genre && a.title === x.title));
+  if (exist.length) {
+    const rest = songs.filter(x => !exist.includes(x));
+    if (!rest.length) return toast('모두 이미 있는 곡이에요. 이름을 바꾸거나, 있는 곡에 쪽을 더하려면 그 곡의 ⋯ 메뉴 → 관리에서 추가하세요');
+    if (!confirm(`이미 있는 곡 ${exist.length}개(${exist.slice(0, 3).map(x => x.title).join(', ')}${exist.length > 3 ? ' …' : ''})는 건너뛰고,\n새 곡 ${rest.length}개만 올릴까요?\n(같은 곡이 두 번 올라가는 것을 막아요)`)) return;
+    songs = rest;
+  }
+  const left = x => x.pages.map((p, j) => j).filter(j => !(spProg[x.st] && spProg[x.st].done.has(j)));
+  const total = songs.reduce((t, x) => t + left(x).length, 0);
+  let doneN = 0, k = 0, err = null; const lim = limiter(4), jobs = [];
+  const prog = () => { if (!err) busy(`곡 ${k}/${songs.length} · ${doneN}/${total}쪽 올리는 중…`, total ? doneN / total : 0); };
   try {
     for (const x of songs) {
-      k++;
-      busy(`곡 ${k}/${songs.length} 만드는 중… ${x.title}`);
-      const id = await call('createSong', x.genre, x.title);
-      const stamp = Date.now();
-      for (let j = 0; j < x.pages.length; j++) {
-        busy(`곡 ${k}/${songs.length} · ${x.title} · ${j + 1}/${x.pages.length}쪽 올리는 중…`);
-        await call('uploadFile', id, `p_${stamp}_${String(j + 1).padStart(3, '0')}.jpg`, 'image/jpeg', spItems[x.pages[j]].b64);
+      if (err) break; k++;
+      const pr = spProg[x.st] || (spProg[x.st] = { id: null, stamp: Date.now(), done: new Set() });
+      prog();
+      if (!pr.id) pr.id = await run0('createSong', [pw, x.genre, x.title]);       // 곡 폴더는 한 곡씩 차례로 만듦(폴더가 겹쳐 생기지 않게)
+      for (const j of left(x)) {
+        jobs.push(lim(async () => {
+          if (err) return;
+          try { await run0('uploadFile', [pw, pr.id, `p_${pr.stamp}_${String(j + 1).padStart(3, '0')}.jpg`, 'image/jpeg', spItems[x.pages[j]].b64]); pr.done.add(j); doneN++; prog(); }
+          catch (e) { err = err || e; }
+        }));
       }
     }
-    spItems = []; $('#splitdlg').hidden = true;
-    await loadLib(); busy(false); toast(`${songs.length}곡을 등록했어요`);
-  } catch (e) {
-    $('#splitdlg').hidden = true; spItems = [];
+  } catch (e) { err = err || e; }
+  await Promise.allSettled(jobs);
+  if (err) {
+    const fin = songs.filter(x => spProg[x.st] && spProg[x.st].done.size === x.pages.length).length;
     try { await loadLib(); } catch (e2) {}
-    fail(new Error(`${k}번째 곡에서 멈췄어요. 목록에서 확인하고 필요한 곡만 다시 올려 주세요. (${(e && e.message) || e})`));
+    renderSplit(); busy(false);
+    toast(`${fin}/${songs.length}곡까지 올렸어요. 화면은 그대로 두었으니 '등록'을 다시 누르면 이어서 올라가요 (이미 올라간 쪽은 다시 올리지 않아요). ${(err && err.message) || err}`, 10000);
+    return;
   }
+  spItems = []; spProg = {}; $('#splitdlg').hidden = true;
+  try { await loadLib(); } catch (e) {}
+  busy(false); toast(`${songs.length}곡을 등록했어요`);
 };
 
 start();
